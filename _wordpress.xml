@@ -123,7 +123,7 @@
                 
                   padding-bottom:64.47916412353516%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -260,7 +260,7 @@
                 
                   padding-bottom:116.66666412353516%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -526,7 +526,7 @@ func formattedPriceValue(value: Float) -&gt; String {
                 
                   padding-bottom:159.33334350585938%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -663,7 +663,7 @@ func formattedPriceValue(value: Float) -&gt; String {
                 
                   padding-bottom:118.33332824707031%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -800,7 +800,7 @@ func formattedPriceValue(value: Float) -&gt; String {
                 
                   padding-bottom:92.66666412353516%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -937,7 +937,7 @@ func formattedPriceValue(value: Float) -&gt; String {
                 
                   padding-bottom:93.33333587646484%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -1074,7 +1074,7 @@ func formattedPriceValue(value: Float) -&gt; String {
                 
                   padding-bottom:94.33333587646484%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -1206,7 +1206,7 @@ func formattedPriceValue(value: Float) -&gt; String {
                 
                   padding-bottom:94%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -1338,7 +1338,7 @@ func formattedPriceValue(value: Float) -&gt; String {
                 
                   padding-bottom:93%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -1470,7 +1470,7 @@ func formattedPriceValue(value: Float) -&gt; String {
                 
                   padding-bottom:121.66667175292969%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -1602,7 +1602,7 @@ func formattedPriceValue(value: Float) -&gt; String {
                 
                   padding-bottom:67.66666412353516%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -3463,7 +3463,7 @@ struct ContentView: View {
                 
                   padding-bottom:69.8492431640625%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -3595,7 +3595,7 @@ struct ContentView: View {
                 
                   padding-bottom:69.8492431640625%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -3727,7 +3727,7 @@ struct ContentView: View {
                 
                   padding-bottom:216.5333251953125%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -3901,7 +3901,7 @@ struct ContentView: View {
                 
                   padding-bottom:138.125%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -4227,7 +4227,7 @@ struct ContentView: View {
                 
                   padding-bottom:133.3199920654297%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -4359,7 +4359,7 @@ struct ContentView: View {
                 
                   padding-bottom:55.817378997802734%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -4496,7 +4496,7 @@ struct ContentView: View {
                 
                   padding-bottom:150.31846618652344%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -4667,7 +4667,7 @@ struct ContentView: View {
                 
                   padding-bottom:180.21739196777344%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -5328,7 +5328,7 @@ Let people control video and other motion effects. Avoid autoplaying video or ef
                 
                   padding-bottom:67.33333587646484%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -5465,7 +5465,7 @@ Let people control video and other motion effects. Avoid autoplaying video or ef
                 
                   padding-bottom:84.5%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -5881,7 +5881,7 @@ struct AddRemovePagesView: View {
                 
                   padding-bottom:131%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -6010,7 +6010,7 @@ struct AddRemovePagesView: View {
                 
                   padding-bottom:100.74813079833984%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -6139,7 +6139,7 @@ struct AddRemovePagesView: View {
                 
                   padding-bottom:127.33332824707031%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -6441,7 +6441,7 @@ struct ContentView_Previews: PreviewProvider {
                 
                   padding-bottom:186%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -6614,7 +6614,7 @@ struct FloatingClouds: View {
                 
                   padding-bottom:189.6666717529297%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -6846,7 +6846,7 @@ struct FloatingClouds: View {
                 
                   padding-bottom:199.6666717529297%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -7100,7 +7100,7 @@ struct FloatingClouds: View {
                 
                   padding-bottom:191.8333282470703%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -7281,7 +7281,7 @@ struct FloatingClouds: View {
                 
                   padding-bottom:190.8333282470703%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -7505,7 +7505,7 @@ struct LinearNonTransparency: View {
                 
                   padding-bottom:192.16665649414062%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -7711,7 +7711,7 @@ struct LinearNonTransparency: View {
                 
                   padding-bottom:306.8333435058594%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -7867,7 +7867,7 @@ struct LinearNonTransparency: View {
                 
                   padding-bottom:216.6666717529297%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -8205,7 +8205,7 @@ struct ContentView: View {
                 
                   padding-bottom:78.83333587646484%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -8337,7 +8337,7 @@ struct ContentView: View {
                 
                   padding-bottom:60.41666793823242%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -8469,7 +8469,7 @@ struct ContentView: View {
                 
                   padding-bottom:118.08333587646484%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -8627,7 +8627,7 @@ struct ContentView: View {
                 
                   padding-bottom:56.83333206176758%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -8759,7 +8759,7 @@ struct ContentView: View {
                 
                   padding-bottom:51.75%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -8891,7 +8891,7 @@ struct ContentView: View {
                 
                   padding-bottom:53.583335876464844%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -9023,7 +9023,7 @@ struct ContentView: View {
                 
                   padding-bottom:68.58333587646484%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -9155,7 +9155,7 @@ struct ContentView: View {
                 
                   padding-bottom:67.33333587646484%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -9287,7 +9287,7 @@ struct ContentView: View {
                 
                   padding-bottom:216.33334350585938%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -9411,7 +9411,7 @@ struct ContentView: View {
                 
                   padding-bottom:216.33334350585938%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -9561,7 +9561,7 @@ struct ContentView: View {
                 
                   padding-bottom:93.85542297363281%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -9693,7 +9693,7 @@ struct ContentView: View {
                 
                   padding-bottom:70.5%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -9825,7 +9825,7 @@ struct ContentView: View {
                 
                   padding-bottom:72%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -9957,7 +9957,7 @@ struct ContentView: View {
                 
                   padding-bottom:92.33333587646484%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -10089,7 +10089,7 @@ struct ContentView: View {
                 
                   padding-bottom:216.6666717529297%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -10213,7 +10213,7 @@ struct ContentView: View {
                 
                   padding-bottom:216.6666717529297%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -10345,7 +10345,7 @@ struct ContentView: View {
                 
                   padding-bottom:84.83333587646484%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -10477,7 +10477,7 @@ struct ContentView: View {
                 
                   padding-bottom:74.66666412353516%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -10601,7 +10601,7 @@ struct ContentView: View {
                 
                   padding-bottom:70.66666412353516%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -10733,7 +10733,7 @@ struct ContentView: View {
                 
                   padding-bottom:49%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -10857,7 +10857,7 @@ struct ContentView: View {
                 
                   padding-bottom:216.16665649414062%;
                 
-                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+                overflow: hidden;
               "
               >
                 
@@ -11102,7 +11102,7 @@ struct ContentView: View {
               
             " style="
               position: relative;
-              overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              overflow: hidden;
               
             ">
               
@@ -11114,7 +11114,7 @@ struct ContentView: View {
                 
                 <img data-stretch="false" src="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614476284457-0DOL8ZDU3F905X4Z8MXO/Profile_Generic.png" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614476284457-0DOL8ZDU3F905X4Z8MXO/Profile_Generic.png" data-image-dimensions="386x384" data-image-focal-point="0.5,0.5" alt="Profile_Generic.png" data-load="false" src="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614476284457-0DOL8ZDU3F905X4Z8MXO/Profile_Generic.png" width="386" height="384" alt="" sizes="(max-width: 768px) 66.66666666666666vw, 66.66666666666666vw" style="display:block;object-fit: contain;" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614476284457-0DOL8ZDU3F905X4Z8MXO/Profile_Generic.png?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614476284457-0DOL8ZDU3F905X4Z8MXO/Profile_Generic.png?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614476284457-0DOL8ZDU3F905X4Z8MXO/Profile_Generic.png?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614476284457-0DOL8ZDU3F905X4Z8MXO/Profile_Generic.png?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614476284457-0DOL8ZDU3F905X4Z8MXO/Profile_Generic.png?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614476284457-0DOL8ZDU3F905X4Z8MXO/Profile_Generic.png?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614476284457-0DOL8ZDU3F905X4Z8MXO/Profile_Generic.png?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
               
-              <div class="image-overlay" style="overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);"></div>
+              <div class="image-overlay" style="overflow: hidden;"></div>
             </div>
           
             </div>
