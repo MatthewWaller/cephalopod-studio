@@ -1,0 +1,701 @@
+---
+layout: post
+title: 'PDF Capture App Part 5: Defeating the Boss'
+categories: []
+tags: []
+status: publish
+type: post
+published: true
+meta: {}
+---
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html><body>
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">It’s time. I’ve teased this challenger for two blog posts now, and i't’s time to reveal who it is. And it is…</p>
+<p class="" style="white-space:pre-wrap;">THE FILES APP!</p>
+<p class="" style="white-space:pre-wrap;">Yep, there is a handy button in the Files app that will let you use the same PDF scanner I’m using to save to any place in your files, just like us. That means that, for as many taps as my app takes, you can upload the PDFs directly to whatever file or cloud service is connected to your device.</p>
+<p class="" style="white-space:pre-wrap;">Dang it! This was exactly what I wanted, and built! So, is it all for naught? Did I make an app that does exactly what the Files app does, except that the Files app is already on the phone and iPad? Is there no more value I can offer?</p>
+<p class="" style="white-space:pre-wrap;">Well, as so often happens, new discoveries come to light, new competitors enter during development, etc. It’s a fact of entrepreneurial life. And our little app project is no exception. Even though <a href="https://support.apple.com/en-us/HT210336">Apple itself still advertises scanning via Notes</a>, and although our app at least does better than that, the Files app feature is amazing.</p>
+<p class="" style="white-space:pre-wrap;">And now for a great truism in app development:</p>
+<p class="" style="white-space:pre-wrap;">1) Everything worth doing has been done.</p>
+<p class="" style="white-space:pre-wrap;">2) Not everything worth doing has been done well.</p>
+<p class="" style="white-space:pre-wrap;">3) Everything can be done better.</p>
+<p class="" style="white-space:pre-wrap;">Often people stop at the first point and turn around. Others push forward and bring new value to the world. And that’s what we will do. We’ll create something that has people say, well yes, I could use the Apple default but it isn’t as good as PDFTrapper because ___.</p>
+<p class="" style="white-space:pre-wrap;">So what can fill those blanks?</p>
+<p class="" style="white-space:pre-wrap;">It could look a little nicer, and arrange things better. A better design goes a long way. And by design I don’t just mean colors and aesthetics but arranging and setting a up a flow that makes more sense, is less prone to error, and overall does a better job.</p>
+<p class="" style="white-space:pre-wrap;">However, with our simple app, we’re probably not going to optimize the flow much more, or make design improvements that would cause someone to download the app. It’s about as simple and slimmed down as it can be.</p>
+<p class="" style="white-space:pre-wrap;">And it isn’t pretty yet! Once everything is functional, we’ll give an aesthetics pass to make sure our app has all the best looks and feels.</p>
+<p class="" style="white-space:pre-wrap;">(More importantly, we’ll want to give our app the best accessibility, but that will be for another time).</p>
+<p class="" style="white-space:pre-wrap;">Even once our app looks good, aesthetics won’t be enough to sell it.</p>
+<p class="" style="white-space:pre-wrap;">So we go to the next thing you can do: which is, simply, more. You can add more features that help the user accomplish what they want.</p>
+<p class="" style="white-space:pre-wrap;">As awesome as the Files scanner is, there is one thing it can’t do, and which we can make our app do. It’s something significant. Something that most folks would want who do a lot of scanning.</p>
+<h3 style="white-space:pre-wrap;">The new feature</h3>
+<p class="" style="white-space:pre-wrap;">We’re going to let the user delete and add more pages. It sounds so simple. But think about it. You’re doing your taxes and you’ve got several pages for one form. You scan four of them, but then, oh no! You forgot to scan one! Or you got one out of order! All you need to do is delete one here, and scan the other one here. Or maybe you forgot to scan one last page. You just need to add that last page to your already-scanned four pages.</p>
+<p class="" style="white-space:pre-wrap;">But you can’t 😭.</p>
+<p class="" style="white-space:pre-wrap;">You can’t because all you have is the Files scanner. And that scanner won’t let you append a page or delete a page to an existing scan. You can create a brand new PDF from a scan. That’s it. Nothing else. Now you’ve got to spend 5 times as long correcting your mistaking than you would if you only had …</p>
+<p class="" style="white-space:pre-wrap;">PDFTrapper! Which lets users delete pages and add new pages at any point in the document!</p>
+<p class="" style="white-space:pre-wrap;">That’s the idea. Now let’s make it happen.</p>
+<h3 style="white-space:pre-wrap;">The code</h3>
+<p class="" style="white-space:pre-wrap;">First, let’s adjust our PDFManager to include the PDFTrapperDocument itself. And we’ll have a handy variable that calculates the number of pages. And we’re going to do a bit of rewriting to make our navigation handling a little more scalable, so we’ll add an enum for the different ways we can add pages, and the different views that can be available to us on the main screen. And finally we’ll have a “pageNumberForInsertion” that we’ll use if one of “AddPDFOption” is active.</p>
+<p class="" style="white-space:pre-wrap;">Long story short, the code now looks like this:</p>
+</div>
+
+
+
+<pre><code>import Combine
+import PDFKit
+import SwiftUI
+
+class PDFManager: ObservableObject {
+    enum PDFTrapperNavigation {
+        case showEditor
+        case showScanner
+        case showPDFMain
+        case showAddRemovePages
+        case refreshing
+    }
+
+    enum AddPDFOption {
+        case photoRoll
+        case file
+        case camera
+        case none
+    }
+
+    var document: PDFTrapperDocument?
+
+    @Published var pageNumberForInsertion = 0
+    @Published var addPDFOption: AddPDFOption = .none
+
+    @Published var navigation: PDFTrapperNavigation = .showPDFMain
+
+    var saveReporter = PassthroughSubject&lt;Void, Never&gt;()
+    var startEditMode = PassthroughSubject&lt;Void, Never&gt;()
+
+    var pageCount: Int {
+        document?.pdf.pageCount ?? 0
+    }
+
+    func addPhotos(_ photos: [UIImage]) {
+        guard let pdfTrapperDocument = document else {
+            return
+        }
+
+        let pages = photos.compactMap { PDFPage(image: $0) }
+
+        if addPDFOption == .camera {
+            for i in 0 ..&lt; pages.count {
+                pdfTrapperDocument.pdf.insert(pages[i], at: pageNumberForInsertion + i)
+            }
+        }
+
+        if pdfTrapperDocument.isBlank {
+            // Remove the default blank page
+            pdfTrapperDocument.pdf.removePage(at: 0)
+
+            for i in 0 ..&lt; pages.count {
+                pdfTrapperDocument.pdf.insert(pages[i], at: i)
+            }
+        }
+
+        if !pages.isEmpty {
+            save()
+        }
+    }
+
+    func delete(page: Int) {
+        guard let document = document else {
+            return
+        }
+
+        document.pdf.removePage(at: page - 1)
+        save()
+    }
+
+    func save() {
+        saveReporter.send()
+    }
+}</code></pre>
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Now we’ll make our view to add and remove pages. We’ll use Picker to choose what page to delete and what insertion index to use.</p>
+<p class="" style="white-space:pre-wrap;">And we’ll adjust the text to make our index’s understandable to normal people. So the last index can be “Append to the end of document” and such, instead of just the count. And we’ll increment the index by one to represent the page number.</p>
+<p class="" style="white-space:pre-wrap;">We’ll use a Form view to fit in nicely with the system utility aesthetic.</p>
+<p class="" style="white-space:pre-wrap;">The code looks like this:</p>
+</div>
+
+
+
+<pre><code>import SwiftUI
+
+struct AddRemovePagesView: View {
+    var pageCount: Int
+
+    @ObservedObject var manager: PDFManager
+    @State var pageToDelete = 1
+
+    var pageToDeleteString: String {
+        NumberFormatter.localizedString(from: NSNumber(integerLiteral: pageToDelete), number: .none)
+    }
+
+    var pageToInsertString: String {
+        text(forOption: manager.pageNumberForInsertion)
+    }
+
+    func text(forOption option: Int) -&gt; String {
+        if option == pageCount {
+            return "Append to the end"
+        }
+
+        let generalPage = NumberFormatter.localizedString(from: NSNumber(integerLiteral: option + 1), number: .none)
+
+        return "Insert above page " + generalPage
+    }
+
+    var body: some View {
+        VStack {
+            HStack(alignment: .top) {
+                Button(action: {
+                    withAnimation {
+                        manager.navigation = .showPDFMain
+                    }
+                }) {
+                    Image(systemName: "xmark")
+                        .font(Font.body.weight(.bold))
+                }
+                Spacer()
+                Text("Page Managerment")
+                    .font(.title)
+                    .bold()
+            }
+            .padding()
+            Form {
+                Section(header: Text("Page to delete")) {
+                    Picker("Number \(pageToDeleteString)", selection: $pageToDelete) {
+                        ForEach(1...pageCount, id: \.self) { value in
+                            Text("\(value)").tag(value)
+                        }
+
+                    }
+                    .pickerStyle(MenuPickerStyle())
+                    Button("Delete Page") {
+                        manager.delete(page: pageToDelete)
+                    }
+                }
+                Section(header: Text("Page insertion placement")) {
+                    Picker(pageToInsertString, selection: $manager.pageNumberForInsertion) {
+                        ForEach(0...pageCount, id: \.self) { value in
+                            Text(text(forOption: value)).tag(value)
+                        }
+                    }
+                    .pickerStyle(MenuPickerStyle())
+                }
+                Section(header: Text("Insertion options")) {
+                    HStack(spacing: 32) {
+                        Button(action: {
+                            manager.addPDFOption = .photoRoll
+                        }) {
+                            Image(systemName: "photo")
+                                .font(.title)
+                        }
+                        Button(action: {
+                            manager.addPDFOption = .file
+                        }) {
+                            Image(systemName: "folder")
+                                .font(.title)
+                        }
+                        Button(action: {
+                            manager.addPDFOption = .camera
+                            manager.navigation = .showScanner
+                        }) {
+                            Image(systemName: "camera")
+                                .font(.title)
+                        }
+                    }
+                    .padding(.horizontal)
+                }
+            }
+        }
+        .background(Color(.systemGroupedBackground).ignoresSafeArea())
+
+    }
+}</code></pre>
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">And that gives us:</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:600px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                
+                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1617488043705-QLOPAPC6O2LYQMYKQOYC_PageManagement.png_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1617488043705-QLOPAPC6O2LYQMYKQOYC/PageManagement.png" data-image-dimensions="600x786" data-image-focal-point="0.5,0.5" alt="Page management" data-load="false" width="600" height="786" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1617488043705-QLOPAPC6O2LYQMYKQOYC/PageManagement.png?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1617488043705-QLOPAPC6O2LYQMYKQOYC/PageManagement.png?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1617488043705-QLOPAPC6O2LYQMYKQOYC/PageManagement.png?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1617488043705-QLOPAPC6O2LYQMYKQOYC/PageManagement.png?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1617488043705-QLOPAPC6O2LYQMYKQOYC/PageManagement.png?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1617488043705-QLOPAPC6O2LYQMYKQOYC/PageManagement.png?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1617488043705-QLOPAPC6O2LYQMYKQOYC/PageManagement.png?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+          
+          <figcaption class="image-caption-wrapper">
+            <div class="image-caption"><p class="" style="white-space:pre-wrap;">Page management</p></div>
+          </figcaption>
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:600px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                
+                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1617488204005-7ZS0JKX0HGMZ9ZFNCO6Y_Page+to+delete+picker.png_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1617488204005-7ZS0JKX0HGMZ9ZFNCO6Y/Page+to+delete+picker.png" data-image-dimensions="600x604" data-image-focal-point="0.5,0.5" alt="Choosing a page to delete" data-load="false" width="600" height="604" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1617488204005-7ZS0JKX0HGMZ9ZFNCO6Y/Page+to+delete+picker.png?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1617488204005-7ZS0JKX0HGMZ9ZFNCO6Y/Page+to+delete+picker.png?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1617488204005-7ZS0JKX0HGMZ9ZFNCO6Y/Page+to+delete+picker.png?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1617488204005-7ZS0JKX0HGMZ9ZFNCO6Y/Page+to+delete+picker.png?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1617488204005-7ZS0JKX0HGMZ9ZFNCO6Y/Page+to+delete+picker.png?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1617488204005-7ZS0JKX0HGMZ9ZFNCO6Y/Page+to+delete+picker.png?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1617488204005-7ZS0JKX0HGMZ9ZFNCO6Y/Page+to+delete+picker.png?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+          
+          <figcaption class="image-caption-wrapper">
+            <div class="image-caption"><p class="" style="white-space:pre-wrap;">Choosing a page to delete</p></div>
+          </figcaption>
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:600px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                
+                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1617488298797-0B7FIDYC6YNNY6DG7M3K_Page+to+insert.png_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1617488298797-0B7FIDYC6YNNY6DG7M3K/Page+to+insert.png" data-image-dimensions="600x764" data-image-focal-point="0.5,0.5" alt="Page insertion" data-load="false" width="600" height="764" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1617488298797-0B7FIDYC6YNNY6DG7M3K/Page+to+insert.png?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1617488298797-0B7FIDYC6YNNY6DG7M3K/Page+to+insert.png?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1617488298797-0B7FIDYC6YNNY6DG7M3K/Page+to+insert.png?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1617488298797-0B7FIDYC6YNNY6DG7M3K/Page+to+insert.png?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1617488298797-0B7FIDYC6YNNY6DG7M3K/Page+to+insert.png?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1617488298797-0B7FIDYC6YNNY6DG7M3K/Page+to+insert.png?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1617488298797-0B7FIDYC6YNNY6DG7M3K/Page+to+insert.png?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+          
+          <figcaption class="image-caption-wrapper">
+            <div class="image-caption"><p class="" style="white-space:pre-wrap;">Page insertion</p></div>
+          </figcaption>
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Awesome.</p>
+<p class="" style="white-space:pre-wrap;">And one more thing to do is to move our controls, the buttons to edit and manage PDF pages, to a new view. It looks like this:</p>
+</div>
+
+
+
+<pre><code>import SwiftUI
+
+struct PDFMainControls: View {
+    @ObservedObject var manager = PDFManager()
+    var body: some View {
+        HStack {
+            Button("Editing Canvas") {
+                withAnimation {
+                    manager.navigation = .showEditor
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    manager.startEditMode.send()
+                }
+            }
+            Button("Add/Remove Pages") {
+                withAnimation {
+                    manager.navigation = .showAddRemovePages
+                }
+            }
+        }
+    }
+}</code></pre>
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">And finally we adjust our ContentView with several improvements.</p>
+</div>
+
+
+
+<pre><code>import Combine
+import PDFKit
+import SwiftUI
+
+struct ContentView: View {
+    @StateObject var manager = PDFManager()
+    @Binding var document: PDFTrapperDocument
+    var fileURL: URL?
+
+    private func save() {
+        document.setAsNotBlank()
+        document.saveTrigger.toggle()
+
+       refresh()
+    }
+
+    private func refresh() {
+        withAnimation {
+            manager.navigation = .refreshing
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            manager.navigation = .showPDFMain
+        }
+    }
+
+    var body: some View {
+        ZStack {
+            if let url = fileURL {
+                QuickLookController(startEditing: manager.startEditMode, url: url) {
+                    if let refreshedPDF = PDFDocument(url: url) {
+                        document.pdf = refreshedPDF
+                        save()
+                    }
+                }
+                .opacity(0)
+            }
+            switch manager.navigation {
+            case .showPDFMain:
+                if !document.isBlank {
+                    VStack {
+                        PDFDisplayView(pdf: document.pdf)
+                        PDFMainControls(manager: manager)
+                    }
+                }                
+            case .showScanner:
+                ScannerView { images in
+                    manager.addPhotos(images)
+                }
+            case .showAddRemovePages:
+                AddRemovePagesView(pageCount: manager.pageCount, manager: manager)
+            case .refreshing, .showEditor:
+                ProgressView()
+            }
+        }
+        .onAppear {
+            manager.document = document
+            if document.isBlank {
+                withAnimation {
+                    manager.navigation = .showScanner
+                }
+            }
+        }
+        .onReceive(manager.saveReporter, perform: save)
+    }
+}</code></pre>
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">One thing we’ve done here is added the different sections in a handy switch statement. However, we don’t include the QuickLookController. That’s because we want the QuickLookController to always be available to push the actual preview controller, and the QuickLookController is invisible.</p>
+<p class="" style="white-space:pre-wrap;">Another excellent thing we’ve done is attach a refresh mechanism, so that whenever we save our document, the first thing that happens is that we get a progress view and a fade, and that gives our app time to refetch the edited PDF.</p>
+<p class="" style="white-space:pre-wrap;">That gives us this!</p>
+</div>
+
+
+
+<div class="intrinsic" style="max-width:100%">
+<iframe src="//www.youtube.com/embed/zleDS1bemro?wmode=opaque" height="480" width="854" scrolling="no"></iframe>
+<div class="video-caption-wrapper"><div class="video-caption"><p class="" style="white-space:pre-wrap;">Adding and deleting PDF pages.</p></div></div>
+</div>
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Awesome, everything is working!</p>
+<p class="" style="white-space:pre-wrap;">You may notice that there is filler for choosing a photo via the image picker and via the document picker. I leave these for you to implement on your own. My strategy: the same as the QuickLookController: rather than wrapping the views directly, have the UIDocumentPickerViewController and the UIImagePickerController be pushed by an invisible view controller so that more of the appropriate UIKit environment is around them.</p>
+<p class="" style="white-space:pre-wrap;">If you missed this novel, but pro way of wrapping specialty view controllers in SwiftUI, <a href="https://www.cephalopod.studio/blog/pdf-capture-app-part-4-swiftui-pro-tip-amp-pdf-editing">checkout my last post here</a>. </p>
+<h3 style="white-space:pre-wrap;">Next Steps</h3>
+<p class="" style="white-space:pre-wrap;">Now we have an app that is more convenient and efficient than Notes, as capable as Files, and with more helpful features than Files.</p>
+<p class="" style="white-space:pre-wrap;">So, is it time to actually make the app look good?</p>
+<p class="" style="white-space:pre-wrap;">Getting close, but now that we’re here, let’s do something really cool. And I mean, it’s the kind of feature that people actually subscribe to high-priced apps for because, up until recently, it has been really hard to do.</p>
+<p class="" style="white-space:pre-wrap;">What is that feature? Tune in next time! And hit me up at <a href="https://twitter.com/wattmaller1">wattmaller1</a> on Twitter for thoughts and suggestions! Until next time, happy coding.</p>
+</div>
+</body></html>

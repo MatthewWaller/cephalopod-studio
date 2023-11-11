@@ -1,0 +1,351 @@
+---
+layout: post
+title: 'PDF Capture App - Part 4: SwiftUI Pro tip and PDF editing.'
+categories: []
+tags:
+- PDFTrapper
+status: publish
+type: post
+published: true
+meta: {}
+---
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html><body>
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Alright, we’ve got a nice, useful little app for PDFs so far. Now let’s add some nice features that can put it at parity with what the Notes app can do with PDFs, now that we’ve made capturing the PDF smoother and more efficient.</p>
+<p class="" style="white-space:pre-wrap;">You may have seen a screen like this:</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-hidden
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:300px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                
+                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1616287010260-KEB6SWF5EJRXOSTKYR6M_notes_editing.jpeg_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616287010260-KEB6SWF5EJRXOSTKYR6M/notes_editing.jpeg" data-image-dimensions="300x650" data-image-focal-point="0.5,0.5" alt="Example of editing a PDF in the Notes app with editing controls at the bottom." data-load="false" width="300" height="650" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616287010260-KEB6SWF5EJRXOSTKYR6M/notes_editing.jpeg?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616287010260-KEB6SWF5EJRXOSTKYR6M/notes_editing.jpeg?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616287010260-KEB6SWF5EJRXOSTKYR6M/notes_editing.jpeg?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616287010260-KEB6SWF5EJRXOSTKYR6M/notes_editing.jpeg?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616287010260-KEB6SWF5EJRXOSTKYR6M/notes_editing.jpeg?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616287010260-KEB6SWF5EJRXOSTKYR6M/notes_editing.jpeg?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616287010260-KEB6SWF5EJRXOSTKYR6M/notes_editing.jpeg?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;"><strong>﻿</strong><br><br><br></p>
+<p class="" style="white-space:pre-wrap;">Look at all the goodies in that editing toolbar! All kinds of markups, rulers, color pickers. Erasers!  Back and forth undo! And if you use the plus button, you can add text and <strong>gasp</strong> signatures! Saved signatures! It’s all there.</p>
+<p class="" style="white-space:pre-wrap;">Dang. This would take us forever to make on our own. Is there a way to get this for ourselves?</p>
+<p class="" style="white-space:pre-wrap;">There is! It’s called the QLPreviewController. The QL stands for Quick Look. And Quick Look has an editing mode with all of these features in it.</p>
+<p class="" style="white-space:pre-wrap;">It would be nice to just take the controls of QLPreviewController and use them on our own, without needing an entirely separate view to appear. But that is the tradeoff.</p>
+<p class="" style="white-space:pre-wrap;">So once again, we need to dip into UIKit and bring this into our SwiftUI. But we’ll do something different this time.</p>
+<h4 style="white-space:pre-wrap;">Wrapping QLPreviewController, First Try</h4>
+<p class="" style="white-space:pre-wrap;">You can see one handy method of adding the preview controller <a href="https://lostmoa.com/blog/PreviewFilesWithQuickLookInSwiftUI/%20">here</a>:</p>
+<p class="" style="white-space:pre-wrap;">However, we need to add a delegate method to return QLPreviewItemEditingMode.updateContents to it so that it knows that it’s allowed to edit content.</p>
+<p class="" style="white-space:pre-wrap;"><strong>﻿</strong>We’ll also need a URL. So we need to pass one in from our DocumentGroup.</p>
+<p class="" style="white-space:pre-wrap;">We simply add a variable called var fileURL: URL? toward the top of our ContentView and then our DocumentGroup does this:</p>
+</div>
+
+
+
+<pre><code>struct PDFTrapperApp: App {
+    var body: some Scene {
+        DocumentGroup(newDocument: PDFTrapperDocument()) { file in
+            ContentView(document: file.$document, fileURL: file.fileURL)
+        }
+    }
+}</code></pre>
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;"><br>I won’t give the code for this version of the PreviewController since there is a better way, but so far we get this!</p>
+</div>
+
+
+
+<iframe src="//www.youtube.com/embed/3sMhpf1FVcA?wmode=opaque" height="480" width="854" scrolling="no" frameborder="0"></iframe>
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Not bad! The controls appear, we can edit our PDF. We can swipe down to dismiss. But, there are a number of problems.</p>
+<p class="" style="white-space:pre-wrap;">First, we needed a NavigationController to hold the top editing controls, and we don’t get a back or a done button because we’re the first view controller in the stack! So we would need to manually add our editing button.</p>
+<p class="" style="white-space:pre-wrap;">Another problem. We want a distraction free area for editing, and this modal has the background visible and a chance of accidentally swiping down to dismiss. </p>
+<p class="" style="white-space:pre-wrap;">And one other problem, you’ll notice in the video that the top left button transforms from a share icon to the pen icon. That’s not great. Looks a little buggy.</p>
+<p class="" style="white-space:pre-wrap;">What’s the solution? A new way to present view controllers in SwiftUI.</p>
+<h4 style="white-space:pre-wrap;">Wrapping QLPreviewController, A Better Way</h4>
+<p class="" style="white-space:pre-wrap;">One trick with wrapping what I call specialty view controllers (UIDocumentPickerViewController, UIImagePickerController, UIReferenceLibraryViewController, etc.), is that they often expect more of a UIKit environment.</p>
+<p class="" style="white-space:pre-wrap;">For instance,, to get the “Done” button you present QLPreviewController modally like this: present(previewController, animated: true, completion: nil) from a plain view controller.</p>
+<p class="" style="white-space:pre-wrap;">So how can we do that in SwiftUI?</p>
+<p class="" style="white-space:pre-wrap;">What I’ve found helpful is to wrap a plain UIViewController whose only job is to present these specialty controllers.</p>
+<p class="" style="white-space:pre-wrap;">Kind of like this. First we have our PreviewControllerHolder:</p>
+</div>
+
+
+
+<pre><code>import Combine
+import QuickLook
+
+class PreviewControllerHolder: UIViewController {
+    var cancellables = Set&lt;AnyCancellable&gt;()
+    var url: URL
+    var startEditing: PassthroughSubject&lt;Void, Never&gt;
+    var endEditing: () -&gt; Void
+
+    var previewController = QLPreviewController()
+
+    init(url: URL, startEditing: PassthroughSubject&lt;Void, Never&gt;, endEditing: @escaping () -&gt; Void) {
+        self.url = url
+        self.startEditing = startEditing
+        self.endEditing = endEditing
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        url = URL(fileURLWithPath: "")
+        startEditing = PassthroughSubject&lt;Void, Never&gt;()
+        endEditing = { }
+        super.init(coder: coder)
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.alpha = 0
+
+        previewController.delegate = self
+        previewController.dataSource = self
+
+        startEditing
+            .sink { [weak self] in
+                guard let self = self else { return }
+                self.present(self.previewController, animated: true, completion: nil)
+        }
+        .store(in: &amp;cancellables)
+    }
+}
+
+extension PreviewControllerHolder: QLPreviewControllerDataSource {
+    func numberOfPreviewItems(in controller: QLPreviewController) -&gt; Int {
+        1
+    }
+
+    func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -&gt; QLPreviewItem {
+        url as QLPreviewItem
+    }
+}
+
+extension PreviewControllerHolder: QLPreviewControllerDelegate {
+    func previewController(_ controller: QLPreviewController, editingModeFor previewItem: QLPreviewItem) -&gt; QLPreviewItemEditingMode {
+        .updateContents
+    }
+
+    func previewControllerDidDismiss(_ controller: QLPreviewController) {
+        endEditing()
+    }
+}</code></pre>
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">And then we have our simple representable, QuickLookController:</p>
+</div>
+
+
+
+<pre><code>struct QuickLookController: UIViewControllerRepresentable {
+    var startEditing: PassthroughSubject&lt;Void, Never&gt;
+    var url: URL
+    var endEditing: () -&gt; Void
+
+    func makeUIViewController(context: Context) -&gt; PreviewControllerHolder {
+        PreviewControllerHolder(url: url, startEditing: startEditing, endEditing: endEditing)
+    }
+
+    func updateUIViewController(_ viewController: PreviewControllerHolder, context: Context) {
+        //
+    }
+}</code></pre>
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">I added publisher to say when to fire because we’re going to basically hide the holder somewhere on the ContentView (wherever we want really), and let it present the QuickLookController when ready. So it just lives in waiting within our SwiftUI views.</p>
+<p class="" style="white-space:pre-wrap;">So I’m going to add this:</p>
+<p class="" style="white-space:pre-wrap;">var startEditMode = PassthroughSubject&lt;Void, Never&gt;()</p>
+<p class="" style="white-space:pre-wrap;">to the PDFManager.</p>
+<p class="" style="white-space:pre-wrap;">We also have closure to know refresh the PDF in our ContentView when done editing. And we add a progress indicator and opacity animation for smooth transitions.</p>
+<p class="" style="white-space:pre-wrap;">Now our ContentView looks like this!</p>
+</div>
+
+
+
+<pre><code>import Combine
+import PDFKit
+import SwiftUI
+
+struct ContentView: View {
+    @StateObject var manager = PDFManager()
+    @Binding var document: PDFTrapperDocument
+    @State var showScanner = false
+    @State var isEditing = false
+    var fileURL: URL?
+
+    private func save() {
+        document.setAsNotBlank()
+        document.saveTrigger.toggle()
+    }
+
+    var body: some View {
+        ZStack {
+            if let url = fileURL {
+                QuickLookController(startEditing: manager.startEditMode, url: url) {
+                    if let refreshedPDF = PDFDocument(url: url) {
+                        document.pdf = refreshedPDF
+                        manager.saveReporter.send()
+                        isEditing = false
+                    }
+                }
+            }
+            if showScanner {
+                ScannerView { images in
+                    manager.addPhotos(images, toPDFDocument: document)
+                    withAnimation {
+                        showScanner = false
+                    }
+                }
+            } else {
+                if !isEditing {
+                    VStack {
+                        PDFDisplayView(pdf: document.pdf)
+                        Button("Editing Canvas") {
+                            isEditing = true
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                manager.startEditMode.send()
+                            }
+                        }
+                    }
+                    .transition(AnyTransition.opacity.animation(.default))
+                }
+            }
+            if isEditing {
+                ProgressView()
+            }
+        }
+        .onAppear {
+            if document.isBlank {
+                showScanner = true
+            }
+        }
+        .onReceive(manager.saveReporter, perform: save)
+    }
+}</code></pre>
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Awesome! And this is what it looks like:</p>
+</div>
+
+
+
+<iframe src="//www.youtube.com/embed/vnEKhgLE5uY?wmode=opaque" height="480" width="854" scrolling="no" frameborder="0"></iframe>
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Nice, it’s full screen. No glitchy button change. We have our dismiss button. Looking great!</p>
+<p class="" style="white-space:pre-wrap;">Now, it would be nice to remove the bottom sharing tool bar, and automatically trigger the editing tools. There are some way to do that, but they generally involve digging into the subviews of a subclassed QLPreviewController.</p>
+<p class="" style="white-space:pre-wrap;">It’s a little hacky, and it could fail in the future if something undocumented changes, but at worst the code does nothing. So I’ve done that in my own view controller, but consider it a challenge to figure out if you want to try!</p>
+<p class="" style="white-space:pre-wrap;">This is awesome! We have an app that captures PDFs faster than the Notes app, and it now has editing features on par with the Notes app!</p>
+<p class="" style="white-space:pre-wrap;">However, as I mentioned in the last post, it turns out that the Notes app was never our main challenger! There is another, more powerful boss to defeat in our game to make an awesome PDF app.</p>
+<p class="" style="white-space:pre-wrap;">Find out about this challenger in the next post, and, as always <a href="https://t.co/ybrkcoWDEe?amp=1">sign up here</a> if you're interested in checking out the beta when it's ready. </p>
+<p class="" style="white-space:pre-wrap;">Until then, happy coding :)</p>
+</div>
+</body></html>

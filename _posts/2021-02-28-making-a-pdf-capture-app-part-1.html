@@ -1,0 +1,1288 @@
+---
+layout: post
+title: Making a PDF Capture App - Part 1
+categories: []
+tags:
+- PDFTrapper
+status: publish
+type: post
+published: true
+meta: {}
+---
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html><body>
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">What I want to make is a simple PDF capture app. Lately with tax season, I'm uploading tons of docs, and I think I can offer something new.</p>
+<p class="" style="white-space:pre-wrap;">PDF apps I've tried are often junky &amp; ad-ridden, or they are too nice for me &amp; with expensive subscriptions. I want to hit a sweet spot (or if I'm unlucky, a dead zone), with a single-purchase app that does just enough for a casual user. Like the Notes app’s PDF capture but more direct.</p>
+<p class="" style="white-space:pre-wrap;">So, I've got a plan. We'll go with the flow of iOS and SwiftUI. Nothing terribly fancy, adjusting our designs to the direction of the APIs, and still get a lot out of it.</p>
+<p class="" style="white-space:pre-wrap;">My first plan. Let's use DocumentGroup, new in iOS 14. So let's get started! First open Xcode and select "Create a new Xcode project"</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:100%;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                
+                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="true" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1614474939258-WZPLBXO55K0Q9AK7FP4B_create_project.jpg_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614474939258-WZPLBXO55K0Q9AK7FP4B/create_project.jpg" data-image-dimensions="600x552" data-image-focal-point="0.5,0.5" alt="create_project.jpg" data-load="false" width="600" height="552" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614474939258-WZPLBXO55K0Q9AK7FP4B/create_project.jpg?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614474939258-WZPLBXO55K0Q9AK7FP4B/create_project.jpg?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614474939258-WZPLBXO55K0Q9AK7FP4B/create_project.jpg?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614474939258-WZPLBXO55K0Q9AK7FP4B/create_project.jpg?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614474939258-WZPLBXO55K0Q9AK7FP4B/create_project.jpg?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614474939258-WZPLBXO55K0Q9AK7FP4B/create_project.jpg?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614474939258-WZPLBXO55K0Q9AK7FP4B/create_project.jpg?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Now select iOS (no sense making a Mac app at the moment, since the most useful part of the app is PDF capture with a camera). And the choose "Document App"</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:600px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                
+                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1614474953659-8WB2R65NOR5ZBZTNOS06_create_document_app.jpg_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614474953659-8WB2R65NOR5ZBZTNOS06/create_document_app.jpg" data-image-dimensions="600x423" data-image-focal-point="0.5,0.5" alt="create_document_app.jpg" data-load="false" width="600" height="423" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614474953659-8WB2R65NOR5ZBZTNOS06/create_document_app.jpg?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614474953659-8WB2R65NOR5ZBZTNOS06/create_document_app.jpg?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614474953659-8WB2R65NOR5ZBZTNOS06/create_document_app.jpg?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614474953659-8WB2R65NOR5ZBZTNOS06/create_document_app.jpg?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614474953659-8WB2R65NOR5ZBZTNOS06/create_document_app.jpg?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614474953659-8WB2R65NOR5ZBZTNOS06/create_document_app.jpg?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614474953659-8WB2R65NOR5ZBZTNOS06/create_document_app.jpg?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Now let's give it a name, I'll call mine PDFTrapper, and make sure that you have selected Interface SwiftUI and lifecycle SwiftUI App.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:600px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                
+                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1614475083065-TPMDRC9L6BMCJ61DZXA4_name_project.jpg_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475083065-TPMDRC9L6BMCJ61DZXA4/name_project.jpg" data-image-dimensions="600x432" data-image-focal-point="0.5,0.5" alt="name_project.jpg" data-load="false" width="600" height="432" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475083065-TPMDRC9L6BMCJ61DZXA4/name_project.jpg?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475083065-TPMDRC9L6BMCJ61DZXA4/name_project.jpg?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475083065-TPMDRC9L6BMCJ61DZXA4/name_project.jpg?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475083065-TPMDRC9L6BMCJ61DZXA4/name_project.jpg?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475083065-TPMDRC9L6BMCJ61DZXA4/name_project.jpg?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475083065-TPMDRC9L6BMCJ61DZXA4/name_project.jpg?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475083065-TPMDRC9L6BMCJ61DZXA4/name_project.jpg?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Now let's see what we've got. I'll put all the code in one spot just for show and do some condensing, and we've got this.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:600px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                
+                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1614475128623-GII6RMMIVQSAROB464C8_condensed_code_start.jpg_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475128623-GII6RMMIVQSAROB464C8/condensed_code_start.jpg" data-image-dimensions="600x554" data-image-focal-point="0.5,0.5" alt="condensed_code_start.jpg" data-load="false" width="600" height="554" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475128623-GII6RMMIVQSAROB464C8/condensed_code_start.jpg?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475128623-GII6RMMIVQSAROB464C8/condensed_code_start.jpg?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475128623-GII6RMMIVQSAROB464C8/condensed_code_start.jpg?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475128623-GII6RMMIVQSAROB464C8/condensed_code_start.jpg?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475128623-GII6RMMIVQSAROB464C8/condensed_code_start.jpg?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475128623-GII6RMMIVQSAROB464C8/condensed_code_start.jpg?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475128623-GII6RMMIVQSAROB464C8/condensed_code_start.jpg?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">What this gives us is really incredible for under 50 lines of code. The features are:</p>
+<ul data-rte-list="default">
+<li><p class="" style="white-space:pre-wrap;">Free file name changing</p></li>
+<li><p class="" style="white-space:pre-wrap;">Free cloud saving, local saving and any device integrated saving (Google Drive, Box, etc.) </p></li>
+<li><p class="" style="white-space:pre-wrap;">Free sharing</p></li>
+<li><p class="" style="white-space:pre-wrap;">Free viewing as icons or list </p></li>
+<li><p class="" style="white-space:pre-wrap;">Free deletion </p></li>
+<li><p class="" style="white-space:pre-wrap;">Free duplication </p></li>
+<li><p class="" style="white-space:pre-wrap;">Free ordering </p></li>
+<li><p class="" style="white-space:pre-wrap;">Free metadata viewing</p></li>
+<li><p class="" style="white-space:pre-wrap;">Free tagging </p></li>
+<li><p class="" style="white-space:pre-wrap;">Free folder management </p></li>
+<li><p class="" style="white-space:pre-wrap;">Free searching </p></li>
+<li><p class="" style="white-space:pre-wrap;">Free recents tab </p></li>
+<li><p class="" style="white-space:pre-wrap;">Free accessibility</p></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:300px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                
+                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1614475385713-UY8T4NBVPXNZ8PQLLOHK_create_screen_1_of_2.jpg_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475385713-UY8T4NBVPXNZ8PQLLOHK/create_screen_1_of_2.jpg" data-image-dimensions="300x650" data-image-focal-point="0.5,0.5" alt="create_screen_1_of_2.jpg" data-load="false" width="300" height="650" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475385713-UY8T4NBVPXNZ8PQLLOHK/create_screen_1_of_2.jpg?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475385713-UY8T4NBVPXNZ8PQLLOHK/create_screen_1_of_2.jpg?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475385713-UY8T4NBVPXNZ8PQLLOHK/create_screen_1_of_2.jpg?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475385713-UY8T4NBVPXNZ8PQLLOHK/create_screen_1_of_2.jpg?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475385713-UY8T4NBVPXNZ8PQLLOHK/create_screen_1_of_2.jpg?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475385713-UY8T4NBVPXNZ8PQLLOHK/create_screen_1_of_2.jpg?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475385713-UY8T4NBVPXNZ8PQLLOHK/create_screen_1_of_2.jpg?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:300px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                
+                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1614475562012-LIDHGLDKNHG8SET7L3CU_create_screen_2_of_2.jpg_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475562012-LIDHGLDKNHG8SET7L3CU/create_screen_2_of_2.jpg" data-image-dimensions="300x650" data-image-focal-point="0.5,0.5" alt="create_screen_2_of_2.jpg" data-load="false" width="300" height="650" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475562012-LIDHGLDKNHG8SET7L3CU/create_screen_2_of_2.jpg?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475562012-LIDHGLDKNHG8SET7L3CU/create_screen_2_of_2.jpg?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475562012-LIDHGLDKNHG8SET7L3CU/create_screen_2_of_2.jpg?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475562012-LIDHGLDKNHG8SET7L3CU/create_screen_2_of_2.jpg?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475562012-LIDHGLDKNHG8SET7L3CU/create_screen_2_of_2.jpg?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475562012-LIDHGLDKNHG8SET7L3CU/create_screen_2_of_2.jpg?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475562012-LIDHGLDKNHG8SET7L3CU/create_screen_2_of_2.jpg?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">All of this comes with tradeoffs though. There isn't much of a way at all to change the appearance. What you see is what you get. What we're making is a simple utility app though. So this approach is great for us.</p>
+<p class="" style="white-space:pre-wrap;">At the moment though, this is a plan text editor. We just made a mini notes app with a lot of nice features! Now let's start making it our PDFTrapper app. Now my document looks like this, using PDFKit to replace the text with a PDF and handle the saving and reading</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:600px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                
+                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1614475658265-RF2UQOIPAEANH8CUCOTM_new_pdf_document.jpg_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475658265-RF2UQOIPAEANH8CUCOTM/new_pdf_document.jpg" data-image-dimensions="600x509" data-image-focal-point="0.5,0.5" alt="new_pdf_document.jpg" data-load="false" width="600" height="509" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475658265-RF2UQOIPAEANH8CUCOTM/new_pdf_document.jpg?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475658265-RF2UQOIPAEANH8CUCOTM/new_pdf_document.jpg?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475658265-RF2UQOIPAEANH8CUCOTM/new_pdf_document.jpg?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475658265-RF2UQOIPAEANH8CUCOTM/new_pdf_document.jpg?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475658265-RF2UQOIPAEANH8CUCOTM/new_pdf_document.jpg?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475658265-RF2UQOIPAEANH8CUCOTM/new_pdf_document.jpg?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475658265-RF2UQOIPAEANH8CUCOTM/new_pdf_document.jpg?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">So this is good, but we still need a way to display the PDF. To do that, I'll simply add a file to wrap PDFView and use it in my ContentView, like this:</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:600px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                
+                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1614475698424-QSZD5YX6DWYQVOX8474M_pdf_display_view.jpg_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475698424-QSZD5YX6DWYQVOX8474M/pdf_display_view.jpg" data-image-dimensions="600x448" data-image-focal-point="0.5,0.5" alt="pdf_display_view.jpg" data-load="false" width="600" height="448" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475698424-QSZD5YX6DWYQVOX8474M/pdf_display_view.jpg?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475698424-QSZD5YX6DWYQVOX8474M/pdf_display_view.jpg?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475698424-QSZD5YX6DWYQVOX8474M/pdf_display_view.jpg?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475698424-QSZD5YX6DWYQVOX8474M/pdf_display_view.jpg?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475698424-QSZD5YX6DWYQVOX8474M/pdf_display_view.jpg?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475698424-QSZD5YX6DWYQVOX8474M/pdf_display_view.jpg?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475698424-QSZD5YX6DWYQVOX8474M/pdf_display_view.jpg?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:600px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                
+                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1614475719333-04RCJAGNEWACS80KBEKG_new_content_view.jpg_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475719333-04RCJAGNEWACS80KBEKG/new_content_view.jpg" data-image-dimensions="600x424" data-image-focal-point="0.5,0.5" alt="new_content_view.jpg" data-load="false" width="600" height="424" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475719333-04RCJAGNEWACS80KBEKG/new_content_view.jpg?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475719333-04RCJAGNEWACS80KBEKG/new_content_view.jpg?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475719333-04RCJAGNEWACS80KBEKG/new_content_view.jpg?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475719333-04RCJAGNEWACS80KBEKG/new_content_view.jpg?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475719333-04RCJAGNEWACS80KBEKG/new_content_view.jpg?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475719333-04RCJAGNEWACS80KBEKG/new_content_view.jpg?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475719333-04RCJAGNEWACS80KBEKG/new_content_view.jpg?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Now we've created a blank PDF. Let's edited a little just as a sanity check, with a quick and dirty edit in the onAppear, and we get the annotation!</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:600px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                
+                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1614475750890-M3GU9X2LLJUIH4ELIV6E_edit_pdf_on_appear.jpg_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475750890-M3GU9X2LLJUIH4ELIV6E/edit_pdf_on_appear.jpg" data-image-dimensions="600x294" data-image-focal-point="0.5,0.5" alt="edit_pdf_on_appear.jpg" data-load="false" width="600" height="294" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475750890-M3GU9X2LLJUIH4ELIV6E/edit_pdf_on_appear.jpg?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475750890-M3GU9X2LLJUIH4ELIV6E/edit_pdf_on_appear.jpg?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475750890-M3GU9X2LLJUIH4ELIV6E/edit_pdf_on_appear.jpg?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475750890-M3GU9X2LLJUIH4ELIV6E/edit_pdf_on_appear.jpg?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475750890-M3GU9X2LLJUIH4ELIV6E/edit_pdf_on_appear.jpg?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475750890-M3GU9X2LLJUIH4ELIV6E/edit_pdf_on_appear.jpg?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475750890-M3GU9X2LLJUIH4ELIV6E/edit_pdf_on_appear.jpg?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:600px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                
+                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1614475807121-QZ0ZIEF8CQ9KVX1CROV4_edited_pdf.jpg_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475807121-QZ0ZIEF8CQ9KVX1CROV4/edited_pdf.jpg" data-image-dimensions="600x1297" data-image-focal-point="0.5,0.5" alt="edited_pdf.jpg" data-load="false" width="600" height="1297" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475807121-QZ0ZIEF8CQ9KVX1CROV4/edited_pdf.jpg?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475807121-QZ0ZIEF8CQ9KVX1CROV4/edited_pdf.jpg?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475807121-QZ0ZIEF8CQ9KVX1CROV4/edited_pdf.jpg?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475807121-QZ0ZIEF8CQ9KVX1CROV4/edited_pdf.jpg?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475807121-QZ0ZIEF8CQ9KVX1CROV4/edited_pdf.jpg?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475807121-QZ0ZIEF8CQ9KVX1CROV4/edited_pdf.jpg?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614475807121-QZ0ZIEF8CQ9KVX1CROV4/edited_pdf.jpg?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">There is something wrong though. Anyone want to guess what it is? Tune in for part two! <a href="https://t.co/ybrkcoWDEe?amp=1">Sign up here</a> if you're interested in checking out the beta when it's ready :) And for any other comments, <a href="https://twitter.com/wattmaller1">say hi to me on Twitter</a>.</p>
+</div>
+</body></html>

@@ -1,0 +1,1387 @@
+---
+layout: post
+title: SwiftUI Aurora Background Animation
+categories: []
+tags:
+- UI
+- star
+status: publish
+type: post
+published: true
+meta: {}
+---
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html><body>
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Lately I’ve been working on <a href="https://www.cephalopod.studio/work/pearl">my well-being app Pearl</a>. I’m going through a redesign with the help of my friends Joel and Jillian at <a href="https://return.team">Return Technologies</a>! And I was interested in making a beautiful gradient background. Something using a sort of <a href="https://uxdesign.cc/aurora-ui-new-visual-trend-for-2021-c763a7daa7e2">aurora design</a>.</p>
+<p class="" style="white-space:pre-wrap;">What we have in SwiftUI are some excellent gradient helpers: Linear, Radial, Conical. They are all really cool! But I was wanting to put something together that is more organic. And Joel and Jillian brought up the point that it could look really nice animated.</p>
+<p class="" style="white-space:pre-wrap;">My strategy: add multi-colored, animating shapes and apply a blur, which was essentially how the Figma specs were made.</p>
+<p class="" style="white-space:pre-wrap;">So, let’s make a beautiful aurora background with great accessibility to boot!</p>
+<h3 style="white-space:pre-wrap;">The Shapes</h3>
+<p class="" style="white-space:pre-wrap;">First, I’m going to put my shapes on the screen. I’ll just go with circles for now. I’m going to put each one in a quadrant of the screen.</p>
+<p class="" style="white-space:pre-wrap;">I do this by putting all my circles in a ZStack and giving each circle two frames: one frame for the size, and one to expand the circle’s area to the size of the screen, with an alignment to put it in the right corner.</p>
+</div>
+
+
+
+<pre><code>import SwiftUI
+
+struct ContentView: View {
+
+    var body: some View {
+        FloatingClouds()
+    }
+}
+
+struct Cloud: View {
+    let alignment: Alignment
+    var body: some View {
+        Circle()
+            .frame(width: 100, height: 100)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignment)
+    }
+}
+
+struct FloatingClouds: View {
+    var body: some View {
+        ZStack {
+            Color.green
+            Cloud(alignment: .topLeading)
+            Cloud(alignment: .topTrailing)
+            Cloud(alignment: .bottomLeading)
+            Cloud(alignment: .bottomTrailing)
+        }
+        .ignoresSafeArea()
+    }
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:600px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                
+                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1616952897054-QXESSVPU1YSFPIXM2TP8_Circles+in+Corners.png_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616952897054-QXESSVPU1YSFPIXM2TP8/Circles+in+Corners.png" data-image-dimensions="600x1116" data-image-focal-point="0.5,0.5" alt="Our four circles added to the screen." data-load="false" width="600" height="1116" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616952897054-QXESSVPU1YSFPIXM2TP8/Circles+in+Corners.png?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616952897054-QXESSVPU1YSFPIXM2TP8/Circles+in+Corners.png?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616952897054-QXESSVPU1YSFPIXM2TP8/Circles+in+Corners.png?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616952897054-QXESSVPU1YSFPIXM2TP8/Circles+in+Corners.png?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616952897054-QXESSVPU1YSFPIXM2TP8/Circles+in+Corners.png?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616952897054-QXESSVPU1YSFPIXM2TP8/Circles+in+Corners.png?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616952897054-QXESSVPU1YSFPIXM2TP8/Circles+in+Corners.png?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+          
+          <figcaption class="image-caption-wrapper">
+            <div class="image-caption"><p class="" style="white-space:pre-wrap;">Our four circles added to the screen.</p></div>
+          </figcaption>
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Awesome. Now, we want our circles to have some random sizes and offsets, for the organic look. And we want those sizes to fit in with the size of the screen, so that this works with iPhone, iPad and Mac. For that we’ll need GeometryReader.</p>
+<p class="" style="white-space:pre-wrap;">We also want our randomization to not be decided in the view, so that when the view is recalculated we don't randomize all over again and stutter all the time. So we’ll but our randomization in an object that will get created once and then reused. Yep, we’ll use an ObservableObject. And let’s call it CloudProvider, for kicks.</p>
+</div>
+
+
+
+<pre><code>struct Cloud: View {
+    @StateObject var provider = CloudProvider()
+    let alignment: Alignment
+    let proxy: GeometryProxy
+    var body: some View {
+        Circle()
+            .frame(height: proxy.size.height /  provider.frameHeightRatio)
+            .offset(provider.offset)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignment)
+    }
+}
+
+class CloudProvider: ObservableObject {
+    let offset: CGSize
+    let frameHeightRatio: CGFloat
+    init() {
+        frameHeightRatio = CGFloat.random(in: 0.7 ..&lt; 1.4)
+        offset = CGSize(width: CGFloat.random(in: -150 ..&lt; 150),
+                        height: CGFloat.random(in: -150 ..&lt; 150))
+    }
+}
+
+struct FloatingClouds: View {
+    var body: some View {
+        GeometryReader { proxy in
+            ZStack {
+                Color.green
+                Cloud(alignment: .topLeading, proxy: proxy)
+                Cloud(alignment: .topTrailing, proxy: proxy)
+                Cloud(alignment: .bottomLeading, proxy: proxy)
+                Cloud(alignment: .bottomTrailing, proxy: proxy)
+            }
+            .ignoresSafeArea()
+        }
+    }
+}</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:600px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                
+                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1616953470235-HX6AWZPTRFIOMCXA2MFN_Circles+Random+Placement+Size.png_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616953470235-HX6AWZPTRFIOMCXA2MFN/Circles+Random+Placement+Size.png" data-image-dimensions="600x1138" data-image-focal-point="0.5,0.5" alt="Our clouds now with random placement and size." data-load="false" width="600" height="1138" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616953470235-HX6AWZPTRFIOMCXA2MFN/Circles+Random+Placement+Size.png?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616953470235-HX6AWZPTRFIOMCXA2MFN/Circles+Random+Placement+Size.png?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616953470235-HX6AWZPTRFIOMCXA2MFN/Circles+Random+Placement+Size.png?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616953470235-HX6AWZPTRFIOMCXA2MFN/Circles+Random+Placement+Size.png?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616953470235-HX6AWZPTRFIOMCXA2MFN/Circles+Random+Placement+Size.png?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616953470235-HX6AWZPTRFIOMCXA2MFN/Circles+Random+Placement+Size.png?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616953470235-HX6AWZPTRFIOMCXA2MFN/Circles+Random+Placement+Size.png?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+          
+          <figcaption class="image-caption-wrapper">
+            <div class="image-caption"><p class="" style="white-space:pre-wrap;">Our clouds now with random placement and size.</p></div>
+          </figcaption>
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Okay, not much to look at here. Now is the time to add the design’s colors!</p>
+</div>
+
+
+
+<pre><code>struct Theme {
+    static var generalBackground: Color {
+        Color(red: 0.043, green: 0.467, blue: 0.494)
+    }
+
+    static func ellipsesTopLeading(forScheme scheme: ColorScheme) -&gt; Color {
+        let any = Color(red: 0.039, green: 0.388, blue: 0.502, opacity: 0.81)
+        let dark = Color(red: 0.000, green: 0.176, blue: 0.216, opacity: 80.0)
+        switch scheme {
+        case .light:
+            return any
+        case .dark:
+            return dark
+        @unknown default:
+            return any
+        }
+    }
+
+    static func ellipsesTopTrailing(forScheme scheme: ColorScheme) -&gt; Color {
+        let any = Color(red: 0.196, green: 0.796, blue: 0.329, opacity: 0.5)
+        let dark = Color(red: 0.408, green: 0.698, blue: 0.420, opacity: 0.61)
+        switch scheme {
+        case .light:
+            return any
+        case .dark:
+            return dark
+        @unknown default:
+            return any
+        }
+    }
+
+    static func ellipsesBottomTrailing(forScheme scheme: ColorScheme) -&gt; Color {
+        Color(red: 0.541, green: 0.733, blue: 0.812, opacity: 0.7)
+    }
+
+    static func ellipsesBottomLeading(forScheme scheme: ColorScheme) -&gt; Color {
+        let any = Color(red: 0.196, green: 0.749, blue: 0.486, opacity: 0.55)
+        let dark = Color(red: 0.525, green: 0.859, blue: 0.655, opacity: 0.45)
+        switch scheme {
+        case .light:
+            return any
+        case .dark:
+            return dark
+        @unknown default:
+            return any
+        }
+    }
+}</code></pre>
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">And then we adjust the circles like so:</p>
+</div>
+
+
+
+<pre><code>struct Cloud: View {
+    @StateObject var provider = CloudProvider()
+    let alignment: Alignment
+    let proxy: GeometryProxy
+    let color: Color
+    var body: some View {
+        Circle()
+            .fill(color)
+            .frame(height: proxy.size.height /  provider.frameHeightRatio)
+            .offset(provider.offset)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignment)
+    }
+}
+
+struct FloatingClouds: View {
+    @Environment(\.colorScheme) var scheme
+
+    var body: some View {
+        GeometryReader { proxy in
+            ZStack {
+                Theme.generalBackground
+                Cloud(alignment: .bottomTrailing,
+                      proxy: proxy,
+                      color: Theme.ellipsesBottomTrailing(forScheme: scheme))
+                Cloud(alignment: .topTrailing,
+                      proxy: proxy,
+                      color: Theme.ellipsesTopTrailing(forScheme: scheme))
+                Cloud(alignment: .bottomLeading,
+                      proxy: proxy,
+                      color: Theme.ellipsesBottomLeading(forScheme: scheme))
+                Cloud(alignment: .topLeading,
+                      proxy: proxy,
+                      color: Theme.ellipsesTopLeading(forScheme: scheme))
+
+            }
+            .ignoresSafeArea()
+        }
+    }
+}</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:600px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                
+                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1616954722424-C60128FZ1EZGSS3LG11D_Colors+added+to+Circles.png_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616954722424-C60128FZ1EZGSS3LG11D/Colors+added+to+Circles.png" data-image-dimensions="600x1198" data-image-focal-point="0.5,0.5" alt="Colors have been added to the circles." data-load="false" width="600" height="1198" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616954722424-C60128FZ1EZGSS3LG11D/Colors+added+to+Circles.png?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616954722424-C60128FZ1EZGSS3LG11D/Colors+added+to+Circles.png?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616954722424-C60128FZ1EZGSS3LG11D/Colors+added+to+Circles.png?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616954722424-C60128FZ1EZGSS3LG11D/Colors+added+to+Circles.png?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616954722424-C60128FZ1EZGSS3LG11D/Colors+added+to+Circles.png?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616954722424-C60128FZ1EZGSS3LG11D/Colors+added+to+Circles.png?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616954722424-C60128FZ1EZGSS3LG11D/Colors+added+to+Circles.png?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+          
+          <figcaption class="image-caption-wrapper">
+            <div class="image-caption"><p class="" style="white-space:pre-wrap;">Colors have been added to the circles.</p></div>
+          </figcaption>
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;"><br>Now we’re getting somewhere!</p>
+<h3 style="white-space:pre-wrap;">The Animation</h3>
+<p class="" style="white-space:pre-wrap;">Now we have our clouds. How could we make them animate and float around?</p>
+<p class="" style="white-space:pre-wrap;">Well, the trick here is to add an offset first. This will move the circle away from a center. Then we can apply a rotation animation. So that way it will be like the circle is rotating around that offset center. And that’s how we can make the circles rotate in a circular pattern in their quadrant.</p>
+<p class="" style="white-space:pre-wrap;">We also want to give a starting point on that rotation path. And a different speed for each circle. It’s a little like making a solar system!</p>
+<p class="" style="white-space:pre-wrap;">(I’ll also adjust to opacity of each circle for softer colors)</p>
+</div>
+
+
+
+<pre><code>class CloudProvider: ObservableObject {
+    let offset: CGSize
+    let frameHeightRatio: CGFloat
+
+    init() {
+        frameHeightRatio = CGFloat.random(in: 0.7 ..&lt; 1.4)
+        offset = CGSize(width: CGFloat.random(in: -150 ..&lt; 150),
+                        height: CGFloat.random(in: -150 ..&lt; 150))
+    }
+}
+
+struct Cloud: View {
+    @StateObject var provider = CloudProvider()
+    @State var move = false
+    let proxy: GeometryProxy
+    let color: Color
+    let rotationStart: Double
+    let duration: Double
+    let alignment: Alignment
+
+    var body: some View {
+        Circle()
+            .fill(color)
+            .frame(height: proxy.size.height /  provider.frameHeightRatio)
+            .offset(provider.offset)
+            .rotationEffect(.init(degrees: move ? rotationStart : rotationStart + 360) )
+            .animation(Animation.linear(duration: duration).repeatForever(autoreverses: false))
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignment)
+            .opacity(0.8)
+            .onAppear {
+                move.toggle()
+            }
+    }
+}
+
+struct FloatingClouds: View {
+    @Environment(\.colorScheme) var scheme
+
+    var body: some View {
+        GeometryReader { proxy in
+            ZStack {
+                Theme.generalBackground
+                Cloud(proxy: proxy,
+                      color: Theme.ellipsesBottomTrailing(forScheme: scheme),
+                      rotationStart: 0,
+                      duration: 60,
+                      alignment: .bottomTrailing)
+                Cloud(proxy: proxy,
+                      color: Theme.ellipsesTopTrailing(forScheme: scheme),
+                      rotationStart: 240,
+                      duration: 50,
+                      alignment: .topTrailing)
+                Cloud(proxy: proxy,
+                      color: Theme.ellipsesBottomLeading(forScheme: scheme),
+                      rotationStart: 120,
+                      duration: 80,
+                      alignment: .bottomLeading)
+                Cloud(proxy: proxy,
+                      color: Theme.ellipsesTopLeading(forScheme: scheme),
+                      rotationStart: 180,
+                      duration: 70,
+                      alignment: .topLeading)
+            }
+            .ignoresSafeArea()
+        }
+    }
+}</code></pre>
+<div class="intrinsic" style="max-width:100%">
+<iframe src="//www.youtube.com/embed/NlbDJLq5xdc?wmode=opaque" height="480" width="854" scrolling="no" frameborder="0"></iframe>
+<div class="video-caption-wrapper"><div class="video-caption"><p class="" style="white-space:pre-wrap;">Video of circles animating</p></div></div>
+</div>
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Not bad! Kind of a lava lamp feel. Very floaty and peaceful, what I’m going for. You’ll notice I also hard coded some things on initialization: the speed and rotation start. That’s because, while randomization can be really cool and helpful, it doesn’t alway aesthetically produce the best results, so I’ve done some guiding that should still translate well to other platforms.</p>
+<h3 style="white-space:pre-wrap;">The Blur</h3>
+<p class="" style="white-space:pre-wrap;">This part, you might think, is easy. Just put your shapes behind a UIVisualEffectView, which is easy to wrap in SwiftUI. </p>
+<p class="" style="white-space:pre-wrap;">Well, I tried it. And the blur was too intense for all the styles I tried, and the colors too muddled. I would need to think of something else.</p>
+<p class="" style="white-space:pre-wrap;">So instead, I’m using .blur in SwiftUI.</p>
+<p class="" style="white-space:pre-wrap;">.blur isn’t the same thing as UIVisualEffectView. What it does is apply a gaussian blur. It makes the edges fuzzy! So it won’t work to provide blur as a window to things underneath, the way UIVisualEffectView does.</p>
+<p class="" style="white-space:pre-wrap;">First I used it on the whole background like this:</p>
+</div>
+
+
+
+<pre><code>struct FloatingClouds: View {
+    @Environment(\.colorScheme) var scheme
+    let blur: CGFloat = 60
+
+    var body: some View {
+        GeometryReader { proxy in
+            ZStack {
+                Theme.generalBackground
+                Cloud(proxy: proxy,
+                      color: Theme.ellipsesBottomTrailing(forScheme: scheme),
+                      rotationStart: 0,
+                      duration: 60,
+                      alignment: .bottomTrailing)
+                Cloud(proxy: proxy,
+                      color: Theme.ellipsesTopTrailing(forScheme: scheme),
+                      rotationStart: 240,
+                      duration: 50,
+                      alignment: .topTrailing)
+                Cloud(proxy: proxy,
+                      color: Theme.ellipsesBottomLeading(forScheme: scheme),
+                      rotationStart: 120,
+                      duration: 80,
+                      alignment: .bottomLeading)
+                Cloud(proxy: proxy,
+                      color: Theme.ellipsesTopLeading(forScheme: scheme),
+                      rotationStart: 180,
+                      duration: 70,
+                      alignment: .topLeading)
+            }
+            .blur(radius: blur)
+            .ignoresSafeArea()
+        }
+    }
+}</code></pre>
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">But that cause too much transparency along the edges. See here:</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:600px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                
+                  padding-bottom:191.8333282470703%;
+                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1616955946229-ZOA2WWLTU4Z5ULDAR67D_View+with+blurred+edges.png_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616955946229-ZOA2WWLTU4Z5ULDAR67D/View+with+blurred+edges.png" data-image-dimensions="600x1151" data-image-focal-point="0.5,0.5" alt="View with blurred edges." data-load="false" width="600" height="1151" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616955946229-ZOA2WWLTU4Z5ULDAR67D/View+with+blurred+edges.png?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616955946229-ZOA2WWLTU4Z5ULDAR67D/View+with+blurred+edges.png?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616955946229-ZOA2WWLTU4Z5ULDAR67D/View+with+blurred+edges.png?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616955946229-ZOA2WWLTU4Z5ULDAR67D/View+with+blurred+edges.png?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616955946229-ZOA2WWLTU4Z5ULDAR67D/View+with+blurred+edges.png?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616955946229-ZOA2WWLTU4Z5ULDAR67D/View+with+blurred+edges.png?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616955946229-ZOA2WWLTU4Z5ULDAR67D/View+with+blurred+edges.png?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+          
+          <figcaption class="image-caption-wrapper">
+            <div class="image-caption"><p class="" style="white-space:pre-wrap;">View with blurred edges.</p></div>
+          </figcaption>
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">What works better is to only blur the circles. Like this:</p>
+</div>
+
+
+
+<pre><code>struct FloatingClouds: View {
+    @Environment(\.colorScheme) var scheme
+    let blur: CGFloat = 60
+
+    var body: some View {
+        GeometryReader { proxy in
+            ZStack {
+                Theme.generalBackground
+                ZStack {
+                    Cloud(proxy: proxy,
+                          color: Theme.ellipsesBottomTrailing(forScheme: scheme),
+                          rotationStart: 0,
+                          duration: 60,
+                          alignment: .bottomTrailing)
+                    Cloud(proxy: proxy,
+                          color: Theme.ellipsesTopTrailing(forScheme: scheme),
+                          rotationStart: 240,
+                          duration: 50,
+                          alignment: .topTrailing)
+                    Cloud(proxy: proxy,
+                          color: Theme.ellipsesBottomLeading(forScheme: scheme),
+                          rotationStart: 120,
+                          duration: 80,
+                          alignment: .bottomLeading)
+                    Cloud(proxy: proxy,
+                          color: Theme.ellipsesTopLeading(forScheme: scheme),
+                          rotationStart: 180,
+                          duration: 70,
+                          alignment: .topLeading)
+                }
+                .blur(radius: blur)
+            }
+            .ignoresSafeArea()
+        }
+    }
+}</code></pre>
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">That gives you this:</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:600px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                
+                  padding-bottom:190.8333282470703%;
+                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1616956146008-76IKMG25IY10FDTMCDJL_View+without+blurred+edges.png_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616956146008-76IKMG25IY10FDTMCDJL/View+without+blurred+edges.png" data-image-dimensions="600x1145" data-image-focal-point="0.5,0.5" alt="View without blurred edges." data-load="false" width="600" height="1145" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616956146008-76IKMG25IY10FDTMCDJL/View+without+blurred+edges.png?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616956146008-76IKMG25IY10FDTMCDJL/View+without+blurred+edges.png?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616956146008-76IKMG25IY10FDTMCDJL/View+without+blurred+edges.png?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616956146008-76IKMG25IY10FDTMCDJL/View+without+blurred+edges.png?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616956146008-76IKMG25IY10FDTMCDJL/View+without+blurred+edges.png?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616956146008-76IKMG25IY10FDTMCDJL/View+without+blurred+edges.png?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616956146008-76IKMG25IY10FDTMCDJL/View+without+blurred+edges.png?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+          
+          <figcaption class="image-caption-wrapper">
+            <div class="image-caption"><p class="" style="white-space:pre-wrap;">View without blurred edges.</p></div>
+          </figcaption>
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">And finally we apply the animation and we get …</p>
+</div>
+
+
+
+<div class="intrinsic" style="max-width:100%">
+<div class="embed-block-wrapper " style="padding-bottom:56.20609%;"><div class="sqs-video-wrapper" data-provider-name="YouTube" data-html='&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;  &lt;br/&gt;  &lt;iframe src="//www.youtube.com/embed/aiIdZNE1O4s?wmode=opaque" height="480" width="854" scrolling="no" frameborder="0" allowfullscreen&gt;&lt;/iframe&gt;&lt;br/&gt;&lt;br/&gt;'></div></div>
+<div class="video-caption-wrapper"><div class="video-caption"><p class="" style="white-space:pre-wrap;">Animation with the blur applied.</p></div></div>
+</div>
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Awesome, we’ve got a mesmerizing and calming animation for the well being app. Now to make sure it’s accessible!</p>
+<h3 style="white-space:pre-wrap;">Accessibility</h3>
+<p class="" style="white-space:pre-wrap;">As you can see, we’ve already adjusted our accessibility for light mode and dark mode. So that’s nice.</p>
+<p class="" style="white-space:pre-wrap;">Now we need to respect reduced motion. We’ll add a check to decide whether we should trigger the animation. We’ll use <a href="https://www.hackingwithswift.com/books/ios-swiftui/supporting-specific-accessibility-needs-with-swiftui">the clever trick here</a>.</p>
+</div>
+
+
+
+<pre><code>func withOptionalAnimation&lt;Result&gt;(_ animation: Animation? = .default, _ body: () throws -&gt; Result) rethrows -&gt; Result {
+    if UIAccessibility.isReduceMotionEnabled {
+        return try body()
+    } else {
+        return try withAnimation(animation, body)
+    }
+}</code></pre>
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">We can use that as a global function and use it anywhere else now too. And we can now remove the animation modifier and use it in the Cloud.</p>
+</div>
+
+
+
+<pre><code>struct Cloud: View {
+    @StateObject var provider = CloudProvider()
+    @State var move = false
+    let proxy: GeometryProxy
+    let color: Color
+    let rotationStart: Double
+    let duration: Double
+    let alignment: Alignment
+
+    var body: some View {
+        Circle()
+            .fill(color)
+            .frame(height: proxy.size.height /  provider.frameHeightRatio)
+            .offset(provider.offset)
+            .rotationEffect(.init(degrees: move ? rotationStart : rotationStart + 360) )
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignment)
+            .opacity(0.8)
+            .onAppear {
+                withOptionalAnimation(Animation.linear(duration: duration).repeatForever(autoreverses: false)) {
+                    move.toggle()
+                }
+            }
+    }
+}</code></pre>
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Next, let’s respect reduced transparency. Technically our blur is not a transparency, but it gives off the same feel and requires more device calculations behind the scene, so we’ll go ahead and disable it.</p>
+<p class="" style="white-space:pre-wrap;">However, the circles without the blur don’t look that great. Instead of just disabling the blur and the transparencies within the colors, let’s do something special for the user and provide a unique gradient. And we’ll have it go from top leading to bottom trailing so that it isn’t too plain.</p>
+</div>
+
+
+
+<pre><code>struct ContentView: View {
+    @Environment(\.accessibilityReduceTransparency) var reduceTransparency
+    var testReduceTransparency = false
+
+    var body: some View {
+        if reduceTransparency || testReduceTransparency {
+            LinearNonTransparency()
+        } else {
+            FloatingClouds()
+        }
+    }
+}
+
+struct LinearNonTransparency: View {
+    @Environment(\.colorScheme) var scheme
+    var gradient: Gradient {
+        Gradient(colors: [Theme.ellipsesTopLeading(forScheme: scheme), Theme.ellipsesTopTrailing(forScheme: scheme)])
+    }
+
+    var body: some View {
+        LinearGradient(gradient: gradient, startPoint: .topLeading, endPoint: .bottomTrailing)
+            .ignoresSafeArea()
+    }
+}</code></pre>
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">You’ll notice I also have a testReduceTransparency variable. That’s so I can test it in SwiftUI Previews. All of the screen shots and videos so far have come from Previews! And there isn’t a way to set the environment variable for accessibilityReduceTransparency the way there is for color schemes.<br></p>
+<p class="" style="white-space:pre-wrap;">So now, with reduce transparency, we get this:</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:600px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                
+                  padding-bottom:192.16665649414062%;
+                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1616957770492-ZLK1FD5FYVJGRRFZ76PT_LinearGradient.png_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616957770492-ZLK1FD5FYVJGRRFZ76PT/LinearGradient.png" data-image-dimensions="600x1153" data-image-focal-point="0.5,0.5" alt="A linear gradient applied for reduced transparency." data-load="false" width="600" height="1153" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616957770492-ZLK1FD5FYVJGRRFZ76PT/LinearGradient.png?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616957770492-ZLK1FD5FYVJGRRFZ76PT/LinearGradient.png?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616957770492-ZLK1FD5FYVJGRRFZ76PT/LinearGradient.png?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616957770492-ZLK1FD5FYVJGRRFZ76PT/LinearGradient.png?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616957770492-ZLK1FD5FYVJGRRFZ76PT/LinearGradient.png?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616957770492-ZLK1FD5FYVJGRRFZ76PT/LinearGradient.png?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616957770492-ZLK1FD5FYVJGRRFZ76PT/LinearGradient.png?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+          
+          <figcaption class="image-caption-wrapper">
+            <div class="image-caption"><p class="" style="white-space:pre-wrap;">A linear gradient applied for reduced transparency.</p></div>
+          </figcaption>
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Awesome! And finally, we’ll add accessibilityDifferentiateWithoutColor.</p>
+<p class="" style="white-space:pre-wrap;">This is more so that people with colorblindness (like me) can understand signals and controls without colors getting in the way. I’ve already asked my designers to provide colors that are colorblind friendly, but let’s go the extra mile of setting the background to something nice and plain, an off-white and off-black, with this setting enabled.</p>
+<p class="" style="white-space:pre-wrap;">In the Theme we’ll add:</p>
+</div>
+
+
+
+<pre><code>static func differentiateWithoutColorBackground(forScheme scheme: ColorScheme) -&gt; Color {
+        let any = Color(white: 0.95)
+        let dark = Color(white: 0.2)
+        switch scheme {
+        case .light:
+            return any
+        case .dark:
+            return dark
+        @unknown default:
+            return any
+        }
+    }</code></pre>
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">And now our ContentView looks like this:</p>
+</div>
+
+
+
+<pre><code>struct ContentView: View {
+    @Environment(\.accessibilityReduceTransparency) var reduceTransparency
+    @Environment(\.accessibilityDifferentiateWithoutColor) var differentiateWithoutColor
+    @Environment(\.colorScheme) var scheme
+    var testReduceTransparency = false
+    var testDifferentiateWithoutColor = false
+
+    var body: some View {
+        if differentiateWithoutColor || testDifferentiateWithoutColor {
+            Theme.differentiateWithoutColorBackground(forScheme: scheme)
+                .ignoresSafeArea()
+        } else {
+            if reduceTransparency || testReduceTransparency {
+                LinearNonTransparency()
+            } else {
+                FloatingClouds()
+            }
+        }
+    }
+}</code></pre>
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Now our preview …</p>
+</div>
+
+
+
+<pre><code>struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+
+        ContentView(testReduceTransparency: true)
+
+        ContentView(testDifferentiateWithoutColor: true)
+            .environment(\.colorScheme, .dark)
+
+        ContentView(testDifferentiateWithoutColor: true)
+            .environment(\.colorScheme, .light)
+    }
+}</code></pre>
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Looks like this!</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:600px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                
+                  padding-bottom:306.8333435058594%;
+                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1616958673946-BU4WBQ9YG1QU79CQMV4J_Preview+Altogether.png_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616958673946-BU4WBQ9YG1QU79CQMV4J/Preview+Altogether.png" data-image-dimensions="600x1841" data-image-focal-point="0.5,0.5" alt="All of our previews together." data-load="false" width="600" height="1841" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616958673946-BU4WBQ9YG1QU79CQMV4J/Preview+Altogether.png?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616958673946-BU4WBQ9YG1QU79CQMV4J/Preview+Altogether.png?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616958673946-BU4WBQ9YG1QU79CQMV4J/Preview+Altogether.png?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616958673946-BU4WBQ9YG1QU79CQMV4J/Preview+Altogether.png?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616958673946-BU4WBQ9YG1QU79CQMV4J/Preview+Altogether.png?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616958673946-BU4WBQ9YG1QU79CQMV4J/Preview+Altogether.png?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1616958673946-BU4WBQ9YG1QU79CQMV4J/Preview+Altogether.png?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+          
+          <figcaption class="image-caption-wrapper">
+            <div class="image-caption"><p class="" style="white-space:pre-wrap;">All of our previews together.</p></div>
+          </figcaption>
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+<div class="sqs-html-content">
+  <h3 style="white-space:pre-wrap;">Conclusion</h3>
+<p class="" style="white-space:pre-wrap;">We’ve done it! We have a accessible, organic, mediative, mesmerizing background.</p>
+<p class="" style="white-space:pre-wrap;">I hope you’ve enjoyed this journey. And feel free to sign up for the beta of Pearl here. It’s an app that has given me personally a lot of meaningful joy and spontaneity, honestly. I use it all the time (insofar as I set it up and receive the wonderful reminders). <a href="https://www.cephalopod.studio/work/pearl">Here is the link for it again</a>.</p>
+<p class="" style="white-space:pre-wrap;">Reach out to me on Twitter <a href="https://twitter.com/wattmaller1">@wattmaller1</a> for any questions, and as always, happy coding.</p>
+</div>
+</body></html>

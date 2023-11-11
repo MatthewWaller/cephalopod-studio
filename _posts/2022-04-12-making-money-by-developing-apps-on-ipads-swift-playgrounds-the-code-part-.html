@@ -1,0 +1,735 @@
+---
+layout: post
+title: How to create in-App Purchases in Apps made on iPad w/ Swift Playgrounds
+categories: []
+tags: []
+status: publish
+type: post
+published: true
+meta: {}
+---
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html><body>
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">I figured out how to make in-app purchases work when making apps with Swift Playgrounds on iPad, and I wanted to share with you, not only the basics, but also the ability to make the code testable on device.</p>
+<p class="" style="white-space:pre-wrap;">The reason being, your in-app purchases won’t work at first!</p>
+<p class="" style="white-space:pre-wrap;">By which I mean, the code only becomes fully functional after you upload it to TestFlight, so you’ll want a way to test purchase flows and such without going through that whole process for sure.</p>
+<p class="" style="white-space:pre-wrap;">On to the code (which by the way, can help with regular Xcode purchasing too in all of it’s async/await goodness!).</p>
+<h3 style="white-space:pre-wrap;">The basic Store.swift</h3>
+<p class="" style="white-space:pre-wrap;">This is the code I use to get my store up and running. It’s a riff on Apple’s example, but a big more generic so that you can reuse it across your apps. Almost a framework or Swift package, but it’s too small to make it an official repo and I’m a very lazy man.</p>
+</div>
+
+
+
+<pre><code>import Foundation
+import Combine
+import StoreKit
+
+typealias Transaction = StoreKit.Transaction
+typealias RenewalInfo = StoreKit.Product.SubscriptionInfo.RenewalInfo
+typealias RenewalState = StoreKit.Product.SubscriptionInfo.RenewalState
+
+public enum StoreError: Error {
+    case failedVerification
+}
+
+class Store {
+    static let shared = Store(productIds: [])
+    private(set) var nonConsumables: [Product] = []
+    private(set) var consumables: [Product] = []
+    private(set) var subscriptions: [Product] = []
+    var purchasedIdentifiers = Set&lt;String&gt;() 
+
+    var updateListenerTask: Task&lt;Void, Error&gt;? = nil
+
+    private let productIds: [String]
+
+    init(productIds: [String]) {
+        self.productIds = productIds
+
+        //Start a transaction listener as close to app launch as possible so you don't miss any transactions.
+        updateListenerTask = listenForTransactionsThatHappenedOutsideTheApp()
+    }
+
+    deinit {
+        updateListenerTask?.cancel()
+    }
+
+    func listenForTransactionsThatHappenedOutsideTheApp() -&gt; Task&lt;Void, Error&gt; {
+        return Task.detached {
+            for await result in Transaction.updates {
+                do {
+                    let transaction = try self.checkVerified(result)
+                    await self.updatePurchasedIdentifiers(transaction)
+
+                    //Always finish a transaction.
+                    await transaction.finish()
+                } catch {
+                    //StoreKit has a receipt it can read but it failed verification. Don't deliver content to the user.
+                }
+            }
+        }
+    }
+
+    func requestProducts() async {
+        do {
+            let storeProducts = try await Product.products(for: productIds)
+            var newNonConsumables: [Product] = []
+            var newSubscriptions: [Product] = []
+            var newConsumables: [Product] = []
+
+            for product in storeProducts {
+                switch product.type {
+                case .consumable:
+                    newConsumables.append(product)
+                case .nonConsumable:
+                    newNonConsumables.append(product)
+                case .autoRenewable:
+                    newSubscriptions.append(product)
+                default:
+                    break
+                }
+            }
+
+            nonConsumables = sortByPrice(newNonConsumables)
+            subscriptions = sortByPrice(newSubscriptions)
+            consumables = sortByPrice(newConsumables)
+        } catch {
+            // Handle error here.
+        }
+    }
+
+    func purchase(_ product: Product?) async throws -&gt; Transaction? {
+        guard let result = try? await product?.purchase() else {
+            return nil
+        }
+
+        switch result {
+        case .success(let verification):
+            let transaction = try checkVerified(verification)
+            await updatePurchasedIdentifiers(transaction)
+            await transaction.finish()
+            return transaction
+        case .userCancelled, .pending:
+            return nil
+        default:
+            return nil
+        }
+    }
+
+    func isPurchased(_ productIdentifier: String) async throws -&gt; Bool {
+        guard let result = await Transaction.latest(for: productIdentifier) else {
+            return false
+        }
+
+        let transaction = try checkVerified(result)
+
+        //Ignore revoked transactions, they're no longer purchased.
+        //For subscriptions, a user can upgrade in the middle of their subscription period. The lower service
+        //tier will then have the `isUpgraded` flag set and there will be a new transaction for the higher service
+        //tier. Ignore the lower service tier transactions which have been upgraded.
+        return transaction.revocationDate == nil &amp;&amp; !transaction.isUpgraded
+    }
+
+    func checkVerified&lt;T&gt;(_ result: VerificationResult&lt;T&gt;) throws -&gt; T {
+        switch result {
+        case .unverified:
+            //StoreKit has parsed the JWS but failed verification. Don't deliver content to the user.
+            throw StoreError.failedVerification
+        case .verified(let safe):
+            return safe
+        }
+    }
+
+    func updatePurchasedIdentifiers(_ transaction: Transaction) async {
+        if transaction.revocationDate == nil {
+            purchasedIdentifiers.insert(transaction.productID)
+        } else {
+            purchasedIdentifiers.remove(transaction.productID)
+        }
+    }
+
+    func sortByPrice(_ products: [Product]) -&gt; [Product] {
+        products.sorted(by: { return $0.price &lt; $1.price })
+    }
+
+    func restorePurchases() {
+        Task {
+            try? await AppStore.sync()
+        }
+    }
+}</code></pre>
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">With that code you can get started on <a href="https://developer.apple.com/in-app-purchase/">subscriptions, consumables, and non-consumables</a>.</p>
+<p class="" style="white-space:pre-wrap;">However, you probably also want a way to test purchases without needing to upload the app to TestFlight each time you make a change. For that you can make an intermediary layer that can use either a debugging/preview version of the store, or the actual production version of the store. So let’s get our protocols and PreviewStore ready.</p>
+</div>
+
+
+
+<pre><code>import StoreKit
+
+protocol Storable {
+    func requestProducts() async
+    var nonconsumableProducts: [Productable] { get }
+    /// You could add other products here, consumables, subscriptions, etc.
+    @MainActor func purchase(_ product: Productable?) async throws -&gt; Bool
+    func isPurchased(_ productIdentifier: String) async throws -&gt; Bool
+}
+
+extension Store: Storable {
+
+    var nonconsumableProducts: [Productable] {
+        nonConsumables
+    }
+
+    @MainActor
+    func purchase(_ product: Productable?) async throws -&gt; Bool {
+        if let product = product as? Product {
+            return try await purchase(product) != nil
+        }
+
+        return false
+    }
+}
+
+import StoreKit
+
+class PreviewStore: Storable {
+    var madePurchase = false
+    var nonconsumableProducts: [Productable] =
+        [
+            PreviewProduct(id: "com.CephalopodStudio.PurchasePro.GoPro", 
+                           displayName: "Go Pro, preview", 
+                           displayPrice: "$0.99")
+        ]
+
+    private var transactions: [Transactionable] = [
+        PreviewTransaction(productID: "com.CephalopodStudio.PurchasePro.GoPro"),
+    ]
+
+    @MainActor
+    func purchase(_ product: Productable?) async throws -&gt; Bool {
+        guard let product = product else {
+            return false
+        }
+
+        let transaction = transactions.first { 
+            $0.productID == product.id
+        }
+
+        madePurchase = true
+
+        return transaction != nil
+    }
+
+    func requestProducts() async { }
+
+    func getProduct(forId id: String) async -&gt; Transactionable? {
+        let transaction = transactions.first { 
+            $0.productID == id
+        }
+
+        return transaction
+    }
+
+    func isPurchased(_ productIdentifier: String) async throws -&gt; Bool {
+        return madePurchase
+    }
+}
+
+struct PreviewProduct: Productable {
+    var id: String
+    var displayName: String
+    var displayPrice: String
+}
+
+struct PreviewTransaction: Transactionable {
+    var productID: String
+}
+
+public protocol Productable {
+    var id: String { get }
+    var displayName: String { get }
+    var displayPrice: String { get }
+}
+
+protocol Transactionable {
+    var productID: String { get }
+}
+
+extension Product: Productable { }
+extension Transaction: Transactionable { }</code></pre>
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Now we can make the Storefront that can use either PreviewStore or the regular Store. Storefront will be the code to handle purchases specific to your app. In this case, I’m going to do one, non-consumable purchase.</p>
+</div>
+
+
+
+<pre><code>import StoreKit
+import SwiftUI
+
+public class Storefront: ObservableObject {
+    enum StoreType {
+        case preview
+        case production
+    }
+
+    var store: Storable
+    let goProId = "com.CephalopodStudio.PurchasePro.GoPro"
+    @Published var isPro = false
+    @Published var product: Productable? = nil
+
+    init(type: StoreType) {
+        switch type {
+        case .preview:
+            store = PreviewStore()
+        case .production:
+            store = Store(productIds: [goProId])
+        }
+
+        Task {
+            await store.requestProducts()
+            if try await store.isPurchased(goProId) {
+                isPro = true
+            }
+            product = store.nonconsumableProducts.first
+        }
+    }
+
+    @MainActor
+    func purchasePro() {
+        Task {
+            isPro = try await store.purchase(product)
+        }
+    }
+
+    func purchasedIdentifiersUpdated(_ ids: Set&lt;String&gt;) {
+        isPro = ids.contains(goProId)
+    }
+}</code></pre>
+
+
+<div class="sqs-html-content">
+  <h3 style="white-space:pre-wrap;">Tying It Together</h3>
+<p class="" style="white-space:pre-wrap;">Finally, let’s make the app that uses this Storefront. It’s an app with one purpose: to tell you that you’re pro. Like the I Am Rich app of old, but less interesting.</p>
+</div>
+
+
+
+<pre><code>import SwiftUI
+
+@main
+struct PurchaseProApp: App {
+    @StateObject var storefront = Storefront(type: .preview)
+    // Comment out this line ⬆️ and uncomment this line ⬇️ when you submit to the App Store.
+    // @StateObject var storefront = Storefront(type: .production)
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+                .environmentObject(storefront)
+        }
+    }
+}</code></pre>
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">And here is the UI of the app:</p>
+</div>
+
+
+
+<pre><code>import SwiftUI
+
+struct ContentView: View {
+    @EnvironmentObject var storefront: Storefront
+
+    var body: some View {
+        VStack {
+            if storefront.isPro {
+                Text("You're Pro!")
+                    .font(.largeTitle)
+            } else {
+                Button {
+                    storefront.purchasePro()
+                } label: {
+                    if let product = storefront.product {
+                        VStack {
+                            Text(product.displayName)
+                                .font(.largeTitle)
+                            Text(product.displayPrice)
+                                .font(.title)
+                        }
+                    } else {
+                        Text("No product found.")
+                    }
+                }
+            }
+            Spacer()
+            Button("Reset") {
+                storefront.isPro = false
+            }
+        }
+        .padding()
+    }
+}</code></pre>
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">All that gives you this:</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:2388px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                
+                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_11b9a609-a87e-4f2b-84df-0bc2be99c882_Screenshot+2022-04-11+at+8.06.37+PM.png_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/11b9a609-a87e-4f2b-84df-0bc2be99c882/Screenshot+2022-04-11+at+8.06.37+PM.png" data-image-dimensions="2388x1668" data-image-focal-point="0.5,0.5" alt="Screenshot of code and app preview showing the go pro button." data-load="false" width="2388" height="1668" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/11b9a609-a87e-4f2b-84df-0bc2be99c882/Screenshot+2022-04-11+at+8.06.37+PM.png?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/11b9a609-a87e-4f2b-84df-0bc2be99c882/Screenshot+2022-04-11+at+8.06.37+PM.png?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/11b9a609-a87e-4f2b-84df-0bc2be99c882/Screenshot+2022-04-11+at+8.06.37+PM.png?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/11b9a609-a87e-4f2b-84df-0bc2be99c882/Screenshot+2022-04-11+at+8.06.37+PM.png?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/11b9a609-a87e-4f2b-84df-0bc2be99c882/Screenshot+2022-04-11+at+8.06.37+PM.png?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/11b9a609-a87e-4f2b-84df-0bc2be99c882/Screenshot+2022-04-11+at+8.06.37+PM.png?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/11b9a609-a87e-4f2b-84df-0bc2be99c882/Screenshot+2022-04-11+at+8.06.37+PM.png?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Then you tap that text/button up top and you get this:</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:2388px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1398ff72-b507-46df-895d-6207530eff7b_Screenshot+2022-04-11+at+8.08.23+PM.png_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1398ff72-b507-46df-895d-6207530eff7b/Screenshot+2022-04-11+at+8.08.23+PM.png" data-image-dimensions="2388x1668" data-image-focal-point="0.5,0.5" alt="" data-load="false" width="2388" height="1668" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1398ff72-b507-46df-895d-6207530eff7b/Screenshot+2022-04-11+at+8.08.23+PM.png?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1398ff72-b507-46df-895d-6207530eff7b/Screenshot+2022-04-11+at+8.08.23+PM.png?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1398ff72-b507-46df-895d-6207530eff7b/Screenshot+2022-04-11+at+8.08.23+PM.png?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1398ff72-b507-46df-895d-6207530eff7b/Screenshot+2022-04-11+at+8.08.23+PM.png?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1398ff72-b507-46df-895d-6207530eff7b/Screenshot+2022-04-11+at+8.08.23+PM.png?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1398ff72-b507-46df-895d-6207530eff7b/Screenshot+2022-04-11+at+8.08.23+PM.png?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1398ff72-b507-46df-895d-6207530eff7b/Screenshot+2022-04-11+at+8.08.23+PM.png?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Then tap reset to set it to non-pro again.</p>
+<p class="" style="white-space:pre-wrap;">Getting setup for an in-app purchase is quite the procedure, filled with banking documents and App Store Connect maneuvers. <a href="https://qonversion.io/blog/configure-iap-app-store-connect/">Here is a helpful recent article on it</a>. If you are following along here, you’ll want to create a non-consumable in-app purchase instead of the subscription and adjust the id of the in-app purchase to suit your own needs.</p>
+<p class="" style="white-space:pre-wrap;">With that though, we upload to TestFlight! (After we’ve changed our Store to .production instead of .preview; when you do that you should see “No product found” in your Swift Playgrounds App Preview area). </p>
+<p class="" style="white-space:pre-wrap;">And voila! </p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:1125px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                
+                  padding-bottom:216.5333251953125%;
+                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1d04ce8f-4244-46f2-905a-f6c2b3d4adb2_IMG_2BA3A12A1E22-1.jpeg_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1d04ce8f-4244-46f2-905a-f6c2b3d4adb2/IMG_2BA3A12A1E22-1.jpeg" data-image-dimensions="1125x2436" data-image-focal-point="0.5,0.5" alt="In-app purchase being made." data-load="false" width="1125" height="2436" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1d04ce8f-4244-46f2-905a-f6c2b3d4adb2/IMG_2BA3A12A1E22-1.jpeg?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1d04ce8f-4244-46f2-905a-f6c2b3d4adb2/IMG_2BA3A12A1E22-1.jpeg?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1d04ce8f-4244-46f2-905a-f6c2b3d4adb2/IMG_2BA3A12A1E22-1.jpeg?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1d04ce8f-4244-46f2-905a-f6c2b3d4adb2/IMG_2BA3A12A1E22-1.jpeg?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1d04ce8f-4244-46f2-905a-f6c2b3d4adb2/IMG_2BA3A12A1E22-1.jpeg?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1d04ce8f-4244-46f2-905a-f6c2b3d4adb2/IMG_2BA3A12A1E22-1.jpeg?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1d04ce8f-4244-46f2-905a-f6c2b3d4adb2/IMG_2BA3A12A1E22-1.jpeg?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Thanks for following along. If you’re interested in supporting, checkout my apps <a href="https://apps.apple.com/us/app/pearl-wellness-reminders/id1567837432">Pearl</a> and <a href="https://apps.apple.com/us/app/todont/id1601697790">ToDon’t</a> (which was created 100% on the iPad. I’m planning on some fancier made-with-iPad apps later!)</p>
+</div>
+</body></html>

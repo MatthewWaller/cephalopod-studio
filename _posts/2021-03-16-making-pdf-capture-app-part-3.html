@@ -1,0 +1,379 @@
+---
+layout: post
+title: Making PDF Capture App - Part 3
+categories: []
+tags:
+- PDFTrapper
+status: publish
+type: post
+published: true
+meta: {}
+---
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html><body>
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Alright, as promised, time to do some fun things. Let’s add the document scanner!</p>
+<p class="" style="white-space:pre-wrap;">First things first. I’m going to create my ScannerView. This is just a VNDocumentCameraViewController wrapped in a UIViewControllerRepresentable, with a completion handler for when the images come back in the delegate, which will be our Coordinator.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:1200px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                
+                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1614486005417-JVCB6YGJL835Q306X0M8_scannerview.png_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614486005417-JVCB6YGJL835Q306X0M8/scannerview.png" data-image-dimensions="1200x946" data-image-focal-point="0.5,0.5" alt="scannerview.png" data-load="false" width="1200" height="946" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614486005417-JVCB6YGJL835Q306X0M8/scannerview.png?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614486005417-JVCB6YGJL835Q306X0M8/scannerview.png?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614486005417-JVCB6YGJL835Q306X0M8/scannerview.png?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614486005417-JVCB6YGJL835Q306X0M8/scannerview.png?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614486005417-JVCB6YGJL835Q306X0M8/scannerview.png?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614486005417-JVCB6YGJL835Q306X0M8/scannerview.png?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614486005417-JVCB6YGJL835Q306X0M8/scannerview.png?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">We’re going to think ahead about adding a button that lets you bring up the scanner to insert or append pages if you open an existing PDF. So I’ll add some logic to show the scanner if the document is blank, but otherwise, look to the scanner-button-pressed variable.</p>
+<p class="" style="white-space:pre-wrap;">And of course, we add the code to take the image we get from the completion handler and feed them to our PDF manager, which will add the images to the PDF as individual pages!</p>
+<p class="" style="white-space:pre-wrap;">So the PDFManager looks like this:</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:1200px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                
+                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1614486029059-QEHMOSETX9EEXZLEU0N6_new_pdfmanager.png_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614486029059-QEHMOSETX9EEXZLEU0N6/new_pdfmanager.png" data-image-dimensions="1200x725" data-image-focal-point="0.5,0.5" alt="new_pdfmanager.png" data-load="false" width="1200" height="725" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614486029059-QEHMOSETX9EEXZLEU0N6/new_pdfmanager.png?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614486029059-QEHMOSETX9EEXZLEU0N6/new_pdfmanager.png?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614486029059-QEHMOSETX9EEXZLEU0N6/new_pdfmanager.png?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614486029059-QEHMOSETX9EEXZLEU0N6/new_pdfmanager.png?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614486029059-QEHMOSETX9EEXZLEU0N6/new_pdfmanager.png?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614486029059-QEHMOSETX9EEXZLEU0N6/new_pdfmanager.png?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614486029059-QEHMOSETX9EEXZLEU0N6/new_pdfmanager.png?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">And the ContentView looks like this (please notice the nice slide animation we are going to have going on; it is wonderful :)</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:1200px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                
+                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1614486047602-L38G9VOC7R8NJT5E85WJ_new_contentview.png_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614486047602-L38G9VOC7R8NJT5E85WJ/new_contentview.png" data-image-dimensions="1200x1417" data-image-focal-point="0.5,0.5" alt="new_contentview.png" data-load="false" width="1200" height="1417" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614486047602-L38G9VOC7R8NJT5E85WJ/new_contentview.png?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614486047602-L38G9VOC7R8NJT5E85WJ/new_contentview.png?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614486047602-L38G9VOC7R8NJT5E85WJ/new_contentview.png?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614486047602-L38G9VOC7R8NJT5E85WJ/new_contentview.png?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614486047602-L38G9VOC7R8NJT5E85WJ/new_contentview.png?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614486047602-L38G9VOC7R8NJT5E85WJ/new_contentview.png?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1614486047602-L38G9VOC7R8NJT5E85WJ/new_contentview.png?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">And, now that you’ll need to use the actual camera, don’t forget to add your privacy messages to the Info.plist, to tell the user why you need access to the camera.</p>
+<p class="" style="white-space:pre-wrap;">And this is what we get!!!</p>
+</div>
+
+
+
+<iframe src="//www.youtube.com/embed/-gdW6Uk4yBY?wmode=opaque" height="480" width="854" scrolling="no" frameborder="0"></iframe>
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Welp. We’ve done it. We made a scanner app. And I have a confession to make. I already used it for my taxes! It went loads faster than previous years when I uploaded everything with the Notes app. </p>
+<p class="" style="white-space:pre-wrap;">It takes 2 taps to get to a saved scan in this app while it take 4 taps to do the same thing in the Notes app. Document after document, it adds up.</p>
+<p class="" style="white-space:pre-wrap;">However, let’s not pat ourselves on the back too much just yet. For one, Notes does more than just save PDFs, even when working just with PDFs and it would be nice if our app did a bit more too, on the editing front.</p>
+<p class="" style="white-space:pre-wrap;">And two, there is another built in challenger on the horizon. A little feature in a default app that I hadn’t known about. Do you know what that is? Find out next time as we go from an app that gets a job done, to an app that starts to become competitive!</p>
+</div>
+</body></html>

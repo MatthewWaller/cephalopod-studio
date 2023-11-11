@@ -1,0 +1,49 @@
+---
+layout: post
+title: Lessons from Developing an App on the iPad in Swift Playgrounds from Start
+  to Finish (Including Publishing on the App Store)
+categories: []
+tags: []
+status: publish
+type: post
+published: true
+meta: {}
+---
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html><body><div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">I didn’t know entirely what I was getting myself into by making an app on the iPad. </p>
+<p class="" style="white-space:pre-wrap;">I went in aware of its limitations and tried to think of a little something I could make for myself that would be useful and extremely simple.</p>
+<p class="" style="white-space:pre-wrap;">Thus I settled on the love song of so many developers, the thing that there is plenty of in the world, and yet which is close enough to our souls that we always find ways to make it our own.</p>
+<p class="" style="white-space:pre-wrap;">I mean, of course, the to-do app.</p>
+<p class="" style="white-space:pre-wrap;">I’m an odd bird, so I thought it would be fun to load a to-do app with lots of random and silly things to NOT do, so that I could have a giggle, and check it off for that tiny dopamine hit.</p>
+<p class="" style="white-space:pre-wrap;"><a href="https://apps.apple.com/us/app/todont/id1601697790">And thus my to-do app ToDon’t was born</a>.</p>
+<p class="" style="white-space:pre-wrap;">I have a large set of code and videos of actually making the app here: https://twitter.com/wattmaller1/status/1472263788233641988?s=20</p>
+<p class="" style="white-space:pre-wrap;">As a whole though, let’s start with the limitations:</p>
+<h2 style="white-space:pre-wrap;">Limited …</h2>
+<ol data-rte-list="default">
+<li><p class="" style="white-space:pre-wrap;"><strong>In-app purchases (not what you think!)</strong>: Early reports mistakenly thought it wasn’t possible to use in-app purchases with Swift Playgrounds. What I found out was that they in fact work, but they only become testable in TestFlight, which is annoying since we just got such amazing support of testing configurations and such in Xcode. What you need to do instead, if you want to test in-app purchase scenarios multiple times, is to logout of iCloud on your device and login with a sandbox test account. This is because TestFlight won’t use the sandbox account that you can use in the App Store settings area of your device. It’ll use the iCloud account your device is logged in with overall. (Feedback Id: FB9830444)</p></li>
+<li><p class="" style="white-space:pre-wrap;"><strong>CloudKit: </strong>CloudKit is one of those really nice ways to get scalable, first-party, out-of-the-box syncing and such right in your app. <a href="https://apps.apple.com/us/app/pearl-wellness-reminders/id1567837432">It’s what my app Pearl uses</a>. And dang, I really wish I could’ve used it in ToDont. There is, however, Swift Package support, so if you find persistent storage with some drop-in syncing, that should probably do the trick for you. Probably will have the friction of needing to sign the user into something, and create an account. Dang it, I miss CloudKit. (Feedback Id: FB9830450)</p></li>
+<li><p class="" style="white-space:pre-wrap;"><strong>No Built-In Git</strong>: I needed to install a separate app to drag in my playground file and upload it to GitHub from my iPad. Built-in source control would be an excellent addition to Swift Playgrounds as an educational feature as well! (Feedback Id: FB9830486)</p></li>
+<li><p class="" style="white-space:pre-wrap;"><strong>Limited Debugging</strong>: Very limited, in fact. You get print statements and that’s about it. No stepping through code. (Feedback Id: FB9830492)</p></li>
+<li><p class="" style="white-space:pre-wrap;"><strong>No direct to iPhone</strong>: This is something I was missing. I could only test on the iPhone after I uploaded to TestFlight, so it took a good while to smooth out some animation bugs that appeared only on an older iPhone and not on the iPad. (Feedback Id: FB9830494)</p></li>
+<li><p class="" style="white-space:pre-wrap;"><strong>Widgets &amp; extensions</strong>: No widget support is a bummer, along with other extensions, like keyboard extensions, and so forth. (Feedback Id: FB9830498)</p></li>
+<li>
+<p class="" style="white-space:pre-wrap;"><strong>Miscellaneous</strong>: There are a bunch of things here and there that folks have mentioned: you can import images but can’t clarify sizes with an asset catalogue (Feedback Id: FB9830500), you can’t edit json files from Playgrounds (I guess it’s called SWIFT Playgrounds, eh?). Reading them and parsing them is fine, they’ll just be under “Resources”. However, it would be great to edit these files even if it’s only as basic text files (Feedback Id: FB9830502). There aren’t device previews within Playgrounds previews the way there are for Xcode (Feedback Id: FB9830505). </p>
+<p class="" style="white-space:pre-wrap;">A few more things: it would be nice for the validation of the length of the app name to happen before submitting to App Store Connect (Feedback Id: FB9830509). I haven’t found a way to jump to the definition of a class, struct, etc. Been missing that (Feedback Id: FB9830513). Also refactoring, like renaming all references (Feedback Id: FB9830510). And being able to search an individual file would be good.</p>
+<p class="" style="white-space:pre-wrap;">Also, it would be nice if we could specify <a href="https://developer.apple.com/documentation/bundleresources/information_property_list/itsappusesnonexemptencryption"><em>ITSAppUsesNonExemptEncryption</em></a><em> </em>for smooth uploading to TestFlight, so that I don’t need to update the security settings every time on the web. <a href="https://www.rambo.codes/posts/2021-12-28-a-document-based-app-in-swift-playgrounds-for-ipad">Although that might be in the works</a>. (Feedback Id: FB9830517)</p>
+<p class="" style="white-space:pre-wrap;">Also, as a heads up, you’ll need to make sure you don’t have references to developing on iPad in your metadata. Specifically, I got rejected for my iPad App Store screenshots including the little orange Swift logo in the corner since I took a screenshot while Playgrounds was running.</p>
+</li>
+</ol>
+<h2 style="white-space:pre-wrap;">… And Yet Delightful</h2>
+<ol data-rte-list="default">
+<li><p class="" style="white-space:pre-wrap;"><strong>Fast previews</strong>: We’re running right on the hardware. Previews happen very quickly.</p></li>
+<li><p class="" style="white-space:pre-wrap;"><strong>Nice code completion</strong>: Not everyone reported success with this, and indeed, for myself, code completion stopped a couple of times, and it came back when I restarted the app and hasn’t gone away since. And the code completion I’ve gotten is very fast even with massive files, so no complaints from me there.</p></li>
+<li><p class="" style="white-space:pre-wrap;"><strong>Versatile</strong>: I mean, I’ve got Core Data going, I can build AR apps, games, all of the standard things you want from apps that are essentially smooth web portals are here, we’ve got Bluetooth, microphones, speech recognition, core motion, and of course the camera. It’s all there!</p></li>
+<li><p class="" style="white-space:pre-wrap;"><strong>Perfect prototyper</strong>: If you want to do some work on UI especially, and do a bunch of prototyping, this is a wonderful tool. It’s my go-to code machine around the house lately. Obviously because of ToDon’t, but I find myself thinking, could I just use the iPad? Because Playgrounds are just so light and responsive. Combined with my little magnetic Magic Keyboard, this little thing is a fun, no distractions machine.</p></li>
+<li><p class="" style="white-space:pre-wrap;"><strong>Ease of publishing</strong>: I named my app, gave it it an identifier, and it just uploaded. I can’t tell you how much of a headache it was to get an app I worked on to the App Store. Provisioning profiles, amiright? Uploading the app is just, really nice. And you can create the app record from Playgrounds as well! It makes it all for you.</p></li>
+<li><p class="" style="white-space:pre-wrap;"><strong>A gateway</strong>: I remember working on my iMac and just getting absolutely hooked on how cool it was to create an app when I first started 9 years ago. And to get it running on my phone especially! (I really want that ease of getting apps on the phone). It’s all so much fun. And the fact that it can now be done on a relatively inexpensive machine in a high-quality way is also just great.</p></li>
+</ol>
+<h2 style="white-space:pre-wrap;">Conclusion</h2>
+<p class="" style="white-space:pre-wrap;">In the end, this is exactly what it says it is: Swift Playgrounds. It’s a playground! It’s a place that is primarily great to figure things out. It’s certainly not Xcode on the iPad, nor is it a brand new App Composer app or anything like that. It will shine mostly as a great educational and prototyping tool. </p>
+<p class="" style="white-space:pre-wrap;">And heck, it’s pretty great as a sideproject engine so far. I say that because there is a sweet spot where constraints enable creativity, like the limitations of a sonnet. I’ll be interested to see if any masterpieces emerge.</p>
+</div></body></html>

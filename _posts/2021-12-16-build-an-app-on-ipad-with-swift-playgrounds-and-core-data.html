@@ -1,0 +1,310 @@
+---
+layout: post
+title: Build an App on iPad with Swift Playgrounds and Core Data
+categories: []
+tags: []
+status: publish
+type: post
+published: true
+meta: {}
+---
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html><body>
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Happy Swift Playgrounds day! If you haven’t heard, you can now <a href="https://developer.apple.com/news/?id=v868vy6e">write apps on your iPad</a>.</p>
+<p class="" style="white-space:pre-wrap;">It’s very full featured, but one thing that you might need to do a little extra work on is persistence. Can you use CoreData, for instance? The answer, is, mostly, yes.</p>
+<p class="" style="white-space:pre-wrap;">For instance, we can get the basics of a CoreData ToDo list running quickly. You can see me cross off and uncross off tasks in the preview below and to the right.</p>
+</div>
+
+
+
+<div class="intrinsic" style="max-width:100%">
+<iframe src="//www.youtube.com/embed/TqDPyr_0-5Y?wmode=opaque" height="480" width="640" scrolling="no" frameborder="0"></iframe>
+<div class="video-caption-wrapper"><div class="video-caption"><p class="" style="white-space:pre-wrap;">A video of a ToDo app made with CoreData and SwiftUI on Playgrounds.</p></div></div>
+</div>
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">To the code!</p>
+<p class="" style="white-space:pre-wrap;">First off, so much of this is thanks to the work <a href="https://www.atomicbird.com/blog/core-data-code-only/">made in this blog post</a> on creating CoreData models without the special, graphical model constructor. So if you have more questions about creating relationships between multiple entities, that’s a good place to go.</p>
+<p class="" style="white-space:pre-wrap;">For our use, we’ll just use on object, a Task (and I should probably rename that considering all the new async feature naming with TaskGroup and such).</p>
+<p class="" style="white-space:pre-wrap;">Here are all the files I have:</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:640px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_c1b5cff0-46d9-436e-9070-be805627f52c_DB4010CE-8D7F-44CA-B0AF-0ADE3C97D6D5.jpeg_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/c1b5cff0-46d9-436e-9070-be805627f52c/DB4010CE-8D7F-44CA-B0AF-0ADE3C97D6D5.jpeg" data-image-dimensions="640x884" data-image-focal-point="0.5,0.5" alt="A list of the four files used in the project." data-load="false" width="640" height="884" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/c1b5cff0-46d9-436e-9070-be805627f52c/DB4010CE-8D7F-44CA-B0AF-0ADE3C97D6D5.jpeg?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/c1b5cff0-46d9-436e-9070-be805627f52c/DB4010CE-8D7F-44CA-B0AF-0ADE3C97D6D5.jpeg?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/c1b5cff0-46d9-436e-9070-be805627f52c/DB4010CE-8D7F-44CA-B0AF-0ADE3C97D6D5.jpeg?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/c1b5cff0-46d9-436e-9070-be805627f52c/DB4010CE-8D7F-44CA-B0AF-0ADE3C97D6D5.jpeg?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/c1b5cff0-46d9-436e-9070-be805627f52c/DB4010CE-8D7F-44CA-B0AF-0ADE3C97D6D5.jpeg?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/c1b5cff0-46d9-436e-9070-be805627f52c/DB4010CE-8D7F-44CA-B0AF-0ADE3C97D6D5.jpeg?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/c1b5cff0-46d9-436e-9070-be805627f52c/DB4010CE-8D7F-44CA-B0AF-0ADE3C97D6D5.jpeg?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+          
+          <figcaption class="image-caption-wrapper">
+            <div class="image-caption"><p class="" style="white-space:pre-wrap;">A list of the four files in the project.</p></div>
+          </figcaption>
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Here is the first file. My model of Task</p>
+</div>
+
+
+
+<pre><code>import CoreData
+import SwiftUI
+
+@objc(Task)
+class Task: NSManagedObject {
+    @NSManaged var complete: Bool
+    @NSManaged var name: String?
+    @NSManaged var index: Int
+}
+
+extension Task: Identifiable {
+    var id: Int {
+        index
+    }
+}</code></pre>
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">And now that I have that, I can create my Persistence layer like so:</p>
+</div>
+
+
+
+<pre><code>import CoreData
+import SwiftUI
+
+class Persistence {
+    static let shared = Persistence()
+
+    static let previewFull: Persistence = {
+        let result = Persistence(inMemory: true)
+        let context = result.container.viewContext
+        for index in 0 ..&lt; 5 {
+            let task = Task(context: context)
+            task.name = "Task \(index + 1)"
+            task.complete = false
+            task.index = index
+
+            context.perform {
+                try! context.save()
+            }
+        }
+        return result
+    }()
+
+    let container: NSPersistentContainer
+
+    init(inMemory: Bool = false) {
+        let taskEntity = NSEntityDescription()
+        taskEntity.name = "Task"
+        taskEntity.managedObjectClassName = "Task"
+
+        let nameAttribute = NSAttributeDescription()
+        nameAttribute.name = "name"
+        nameAttribute.type = .string
+        taskEntity.properties.append(nameAttribute)
+
+        let completeAttribute = NSAttributeDescription()
+        completeAttribute.name = "complete"
+        completeAttribute.type = .boolean
+        taskEntity.properties.append(completeAttribute)
+
+        let indexAttribute = NSAttributeDescription()
+        indexAttribute.name = "index"
+        indexAttribute.type = .integer64
+        taskEntity.properties.append(indexAttribute)
+
+        let model = NSManagedObjectModel()
+        model.entities = [taskEntity]
+
+        let container = NSPersistentContainer(name: "TaskModel", managedObjectModel: model)
+
+        if inMemory {
+            container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
+        }
+
+        container.loadPersistentStores { description, error in
+            if let error = error {
+                fatalError("failed with: \(error.localizedDescription)")
+            }
+        }
+
+        container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+
+        container.viewContext.automaticallyMergesChangesFromParent = true
+        self.container = container
+    }
+}</code></pre>
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">You’ll notice that we just needed to specify a bunch of attributes manually for our object, instead of using the graphical interface we have available in Xcode.</p>
+<p class="" style="white-space:pre-wrap;">And I’ve created a preview version of Persistence to have some starter dummy data.</p>
+<p class="" style="white-space:pre-wrap;">Then we can create our app like this:</p>
+</div>
+
+
+
+<pre><code>import SwiftUI
+
+@main
+struct MyApp: App {
+    let persistence = Persistence.previewFull
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+                .environment(\.managedObjectContext, persistence.container.viewContext)
+        }
+    }
+}</code></pre>
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">And our view is this:</p>
+</div>
+
+
+
+<pre><code>import SwiftUI
+
+struct ContentView: View {
+    @Environment(\.managedObjectContext) private var viewContext
+
+    @FetchRequest(sortDescriptors: [
+        NSSortDescriptor(keyPath: \Task.index, ascending: true)
+    ], animation: .default)
+    private var items: FetchedResults&lt;Task&gt;
+
+    var body: some View {
+        List(items) { item in
+            VStack {
+                if !item.complete {
+                    Text(item.name ?? "Unknown")
+                } else {
+                    Text(item.name ?? "Unknown")
+                        .strikethrough()
+                    }
+            }
+            .onTapGesture {
+                    viewContext.perform {
+                        item.complete.toggle()
+                        try! viewContext.save()
+                    }
+                }
+        }
+    }
+}</code></pre>
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">From there you can move forward with CoreData in SwiftUI as you would elsewhere, and we’re off and running!</p>
+<h4 style="white-space:pre-wrap;">Quick Limitation</h4>
+<p class="" style="white-space:pre-wrap;">I like to use all of the automagicalness of CloudKit when I’m working with CoreData, and at least with iPad alone, there isn’t a way to do all of that, so you’ll need to code up your own syncing solution as well if you want that. Both CloudKit entitlements and push notifications [Correction: it seems that local notifications are working, so remote push notifications may well be working too!] are absent from the capabilities you can give your app.</p>
+<p class="" style="white-space:pre-wrap;">Let me know if you find ways around that, and checkout <a href="https://apps.apple.com/us/app/pearl-wellness-reminders/id1567837432">my app Pearl: Wellness Reminders</a>, which does in fact contain that CloudKit/CoreData syncing goodness, just not via the iPad yet!</p>
+</div>
+</body></html>

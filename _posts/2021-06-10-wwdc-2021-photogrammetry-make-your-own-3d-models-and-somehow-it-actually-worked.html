@@ -1,0 +1,414 @@
+---
+layout: post
+title: 'Make your own 3D models: WWDC 2021 Photogrammetry (I am legit surprised it
+  actually worked)'
+categories: []
+tags: []
+status: publish
+type: post
+published: true
+meta: {}
+---
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html><body>
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Alright, I saw the inclusion of photogrammetry in the developer documentation early on and I was hyped! </p>
+<p class="" style="white-space:pre-wrap;">Photogrammetry is where you take pictures of an object from all kinds of angles and then stitch them together to make a 3D model.</p>
+<p class="" style="white-space:pre-wrap;">And usually, it’s not great.</p>
+<p class="" style="white-space:pre-wrap;">I used one or two apps. And of course you take a bunch of photos and then upload them to a server and you get a model. And the results I got before weren’t great. For one, a chunk of the floor was included. Couldn’t quite figure out where to stop at the bottom.</p>
+<p class="" style="white-space:pre-wrap;">I even tried a photogrammetry app that used the scanner for the face and generated a truly horrifying empty shell of my head.</p>
+<p class="" style="white-space:pre-wrap;">So when I saw the stuff in the docs I was like, OMGosh, we’re going to be able to 3D scan right on the phone!</p>
+<p class="" style="white-space:pre-wrap;">Well, not quite. Looking at it the PhotogrammetrySession object was Mac only. Huh.</p>
+<p class="" style="white-space:pre-wrap;">So it turns out that you can take pictures with your phone and then you send them to your Mac and THEN you get your 3D model.</p>
+<p class="" style="white-space:pre-wrap;">And not just any Mac. It has some beefy specs. Either M1 or it needs 4 GB AMD and 16 GB of RAM.</p>
+<p class="" style="white-space:pre-wrap;"><a href="https://developer.apple.com/videos/play/wwdc2021/10076/?time=142">Here is the video of the whole 3D capture presentation.</a></p>
+<p class="" style="white-space:pre-wrap;">So, my equipment met the specs. Why not give it a try?</p>
+<p class="" style="white-space:pre-wrap;">I have an iPhone XS, which has the dual camera on the back that can read depth.</p>
+<p class="" style="white-space:pre-wrap;">The sample code for the image capture app <a href="https://developer.apple.com/documentation/realitykit/taking_pictures_for_3d_object_capture">is here</a>. It’s set for iOS 15 but on the public release of Xcode reset to iOS 14 everything works fine on my non-beta phone.</p>
+<p class="" style="white-space:pre-wrap;">You will, however, need macOS Monterey. </p>
+<p class="" style="white-space:pre-wrap;">And that’s so that you can run the <a href="https://developer.apple.com/documentation/realitykit/creating_a_photogrammetry_command-line_app">command line app here</a>.</p>
+<p class="" style="white-space:pre-wrap;">So, I did a capture of my toddler’s plush Baby Yoda. </p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:2500px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1623292302666-WI7I43OZSB0H3FCRCVD9_IMG_0002.png_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1623292302666-WI7I43OZSB0H3FCRCVD9/IMG_0002.png" data-image-dimensions="2500x3333" data-image-focal-point="0.5,0.5" alt="IMG_0002.png" data-load="false" width="2500" height="3333" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1623292302666-WI7I43OZSB0H3FCRCVD9/IMG_0002.png?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1623292302666-WI7I43OZSB0H3FCRCVD9/IMG_0002.png?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1623292302666-WI7I43OZSB0H3FCRCVD9/IMG_0002.png?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1623292302666-WI7I43OZSB0H3FCRCVD9/IMG_0002.png?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1623292302666-WI7I43OZSB0H3FCRCVD9/IMG_0002.png?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1623292302666-WI7I43OZSB0H3FCRCVD9/IMG_0002.png?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1623292302666-WI7I43OZSB0H3FCRCVD9/IMG_0002.png?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;"><br>This is Baby Yoda. Yes I know that’s not its name. But it’s Baby Yoda to me.</p>
+<p class="" style="white-space:pre-wrap;">As you can see I took pictures of him on the concrete. I was outside. It was around sunset. The light was nice and diffuse. I took 85 pictures. Just went in a circle around the doll, getting a bottom, mid and toward the top shot. The sample app has a nice little guide about how to take the pictures.</p>
+<p class="" style="white-space:pre-wrap;">The photos are stored in the Files app locally on the phone, so I just selected the folder and airdropped them to my Mac.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:1358px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1623292554709-5CICQ16XH9EKRXDKJFLY_Screen+Shot+2021-06-09+at+9.35.25+PM.png_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1623292554709-5CICQ16XH9EKRXDKJFLY/Screen+Shot+2021-06-09+at+9.35.25+PM.png" data-image-dimensions="1358x758" data-image-focal-point="0.5,0.5" alt="The files that were taken and extra data for each photo, like depth and gravity." data-load="false" width="1358" height="758" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1623292554709-5CICQ16XH9EKRXDKJFLY/Screen+Shot+2021-06-09+at+9.35.25+PM.png?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1623292554709-5CICQ16XH9EKRXDKJFLY/Screen+Shot+2021-06-09+at+9.35.25+PM.png?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1623292554709-5CICQ16XH9EKRXDKJFLY/Screen+Shot+2021-06-09+at+9.35.25+PM.png?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1623292554709-5CICQ16XH9EKRXDKJFLY/Screen+Shot+2021-06-09+at+9.35.25+PM.png?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1623292554709-5CICQ16XH9EKRXDKJFLY/Screen+Shot+2021-06-09+at+9.35.25+PM.png?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1623292554709-5CICQ16XH9EKRXDKJFLY/Screen+Shot+2021-06-09+at+9.35.25+PM.png?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1623292554709-5CICQ16XH9EKRXDKJFLY/Screen+Shot+2021-06-09+at+9.35.25+PM.png?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+          
+          <figcaption class="image-caption-wrapper">
+            <div class="image-caption"><p class="" style="white-space:pre-wrap;">The files that were taken and extra data for each photo, like depth and gravity.</p></div>
+          </figcaption>
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">As you can see, the images also have depth and gravity data since I used the iPhone XS. From what I understand, photos alone will work, but I haven’t checked the quality of that yet.</p>
+<p class="" style="white-space:pre-wrap;">Finally, I compiled my command line tool on Xcode. When you do this, you want to open the Product in Finder like so.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:942px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1623292705227-UQMQKSTSPEPV65WYJNLP_Screen+Shot+2021-06-09+at+9.38.14+PM.png_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1623292705227-UQMQKSTSPEPV65WYJNLP/Screen+Shot+2021-06-09+at+9.38.14+PM.png" data-image-dimensions="942x1416" data-image-focal-point="0.5,0.5" alt="Opening the command line product in Finder." data-load="false" width="942" height="1416" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1623292705227-UQMQKSTSPEPV65WYJNLP/Screen+Shot+2021-06-09+at+9.38.14+PM.png?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1623292705227-UQMQKSTSPEPV65WYJNLP/Screen+Shot+2021-06-09+at+9.38.14+PM.png?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1623292705227-UQMQKSTSPEPV65WYJNLP/Screen+Shot+2021-06-09+at+9.38.14+PM.png?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1623292705227-UQMQKSTSPEPV65WYJNLP/Screen+Shot+2021-06-09+at+9.38.14+PM.png?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1623292705227-UQMQKSTSPEPV65WYJNLP/Screen+Shot+2021-06-09+at+9.38.14+PM.png?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1623292705227-UQMQKSTSPEPV65WYJNLP/Screen+Shot+2021-06-09+at+9.38.14+PM.png?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1623292705227-UQMQKSTSPEPV65WYJNLP/Screen+Shot+2021-06-09+at+9.38.14+PM.png?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+          
+          <figcaption class="image-caption-wrapper">
+            <div class="image-caption"><p class="" style="white-space:pre-wrap;">Opening the command line product in Finder.</p></div>
+          </figcaption>
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">After that you open your Finder window in the terminal. You. can do that by Command, and right clicking (I use right click on my trackpad) on a folder in Finder.</p>
+<p class="" style="white-space:pre-wrap;">Once I was where I wanted to be in Terminal I used the commands.</p>
+</div>
+
+
+
+<pre><code>./HelloPhotogrammetry ~/Desktop/yoda ~/Desktop/myYoda.usdz -d reduced</code></pre>
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">This means run the command line program, taking the photos and data from the “yoda” folder on the Desktop and make a USDZ file on the desktop. The detail is to make it “reduced” quality. Watch the video linked above or read the transcript for more information about different settings you can use.</p>
+<p class="" style="white-space:pre-wrap;"><a href="https://www.dropbox.com/s/fz01h11lasq0i3z/myYoda.usdz?dl=0">And that gave me this file I put on Dropbox, which should download to your iPhone if you let it.</a></p>
+<p class="" style="white-space:pre-wrap;">Or you can watch this video!</p>
+</div>
+
+
+
+<div class="intrinsic" style="max-width:100%">
+<iframe src="//www.youtube.com/embed/JCOMIlhOJGM?wmode=opaque" height="480" width="854" scrolling="no" frameborder="0"></iframe>
+<div class="video-caption-wrapper"><div class="video-caption"><p class="" style="white-space:pre-wrap;">Checking out this 3D model of Baby Yoda.</p></div></div>
+</div>
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">I mean it has shadows and everything. It’s pretty awesome.</p>
+<p class="" style="white-space:pre-wrap;">Let me know what you think! I’m @wattmaller1 on Twitter. Would love to see your own awesome scans.</p>
+</div>
+</body></html>

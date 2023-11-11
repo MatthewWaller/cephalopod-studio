@@ -1,0 +1,413 @@
+---
+layout: post
+title: 'Refining Accessibility: Lessons Learned'
+categories: []
+tags: []
+status: publish
+type: post
+published: true
+meta: {}
+---
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html><body>
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">In my post about <a href="https://www.cephalopod.studio/blog/swiftui-aurora-background-animation">making a really cool aurora background</a> I had a section on adjusting for accessibility. I’ve since reconsidered what I wrote and wanted to share more about what I’ve learned.</p>
+<h3 style="white-space:pre-wrap;">Rethinking Our Steps</h3>
+<p class="" style="white-space:pre-wrap;">The first setting I adjusted for in my morphing, animating background is called reducedMotion.</p>
+<p class="" style="white-space:pre-wrap;">The guidelines for motion are worth looking at in full:<br>This is from <a href="https://developer.apple.com/design/human-interface-guidelines/accessibility/overview/appearance-effects/#motion">Apple’s Human Interface Guidelines</a>:</p>
+</div>
+
+
+
+<p><strong>Motion</strong></p>
+<p>Don’t require animations unless they’re vital to your app’s purpose. In general, people should be able to use your app without relying on any animations.</p>
+<p>Play tightened animations when Reduce Motion is on. People can turn on Reduce Motion if they tend to get distracted or experience dizziness or nausea when viewing animations that include effects such as zooming, scaling, spinning, or peripheral motion. In response to this setting, consider tightening the physics of your animations so that they remain rich and engaging, but have reduced motion. For example:</p>
+<p>Tighten springs to reduce bounce effects or track 1:1 with the user’s finger
+Avoid animating depth changes in z-axis layers
+Avoid animating into or out of blurs
+Replace a slide with a fade to avoid motion
+Let people control video and other motion effects. Avoid autoplaying video or effects without also providing a button or other way to control them.</p>
+<p>Be cautious when displaying moving or blinking elements. Although subtle movement and blinking can draw the user’s attention, these effects can also be distracting and they aren’t useful for people with visual impairments. Worse, some blinking elements can cause epileptic episodes. In all cases, avoid using movement and blinking as the only way to convey information.</p>
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">So, stopping the shapes from animating in our aurora background was the right way to go! Yay!</p>
+<p class="" style="white-space:pre-wrap;">What about reducedTransparency? Last time I wrote:</p>
+</div>
+
+
+
+<p>"Technically our blur is not a transparency, but it gives off the same feel and requires more device calculations behind the scene, so we’ll go ahead and disable it.</p>
+<p>However, the circles without the blur don’t look that great. Instead of just disabling the blur and the transparencies within the colors, let’s do something special for the user and provide a unique gradient. And we’ll have it go from top leading to bottom trailing so that it isn’t too plain."</p>
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">From the Human Interface Guidelines (HIG) again:</p>
+</div>
+
+
+
+<p>"<strong>Change blurring and transparency when users turn on Reduce Transparency</strong>. For example, areas of blurred content and translucency should become mostly opaque. For best results, use a color value in the opaque area that’s different from the original color value you used when the area was blurred or translucent."</p>
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">So, it doesn’t mean that we remove all transparency. And it means we should re-examine colors.</p>
+<p class="" style="white-space:pre-wrap;">Again, I think we made the right decision.<br><br>It’s really the last area I gave the biggest rethink: accessibilityDifferentiateWithoutColor. The documentation for this property states: </p>
+</div>
+
+
+
+<p>If this property is YES, the user interface avoids conveying information using color alone. Instead, use shapes or glyphs to convey important information.</p>
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">I turned the background into solid colors, but was this necessary? Our designers kept colorblindness in mind when making the designs and, most importantly, we’re not conveying any state information. The background is mostly aesthetic, meant to contribute to the mood and feel of the app. So, in this case, for our background we will ignore this property.</p>
+<h3 style="white-space:pre-wrap;">Reduced Means Reduced</h3>
+<p class="" style="white-space:pre-wrap;">Just something else to keep in mind as I made changes for things like headers in the Pearl app. If you have a color with opacity, you can make it more solid and adjust the color for things like reduced transparency. And if a button fades in slightly (like the trash icon when a deletion option becomes available), this isn’t really an animation that needs to be completely avoided in the course of making an app. </p>
+<p class="" style="white-space:pre-wrap;">Reduced means reduced. We can make animations tighter where necessary, for instance. In general, we keep the end goals in mind of making the user not feel confused, dizzy, or nauseous. </p>
+<h3 style="white-space:pre-wrap;">Large Text Adjustments</h3>
+<p class="" style="white-space:pre-wrap;">I ran into a bunch of troubles getting the built-in SwiftUI Navigation bar to behave exactly as I wanted it to. I wanted buttons that were a bit more custom, and I wanted to fade in those buttons, and the navigation bar was giving me a tough time. I couldn’t animate anything in that bar! </p>
+<p class="" style="white-space:pre-wrap;">But I also really liked the large title fading into the inline title. And I didn't need to worry about much actual navigating, my other screens presented are presented modally, so without too much trouble I recreated the navigation bar experience in concert with my LazyVGrid.</p>
+</div>
+<iframe src="//www.youtube.com/embed/B0RdAhduBs0?wmode=opaque" height="480" width="640" scrolling="no" frameborder="0"></iframe>
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Not bad so far. What does it look like with the largest text enabled? With the trash icon enabled?</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:600px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1618083781118-JYQJ94NLYDNYFIVR5Y4L_MyPearlsNotFitting.png_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1618083781118-JYQJ94NLYDNYFIVR5Y4L/MyPearlsNotFitting.png" data-image-dimensions="600x404" data-image-focal-point="0.5,0.5" alt="The “My Pearls” text does not fit." data-load="false" width="600" height="404" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1618083781118-JYQJ94NLYDNYFIVR5Y4L/MyPearlsNotFitting.png?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1618083781118-JYQJ94NLYDNYFIVR5Y4L/MyPearlsNotFitting.png?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1618083781118-JYQJ94NLYDNYFIVR5Y4L/MyPearlsNotFitting.png?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1618083781118-JYQJ94NLYDNYFIVR5Y4L/MyPearlsNotFitting.png?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1618083781118-JYQJ94NLYDNYFIVR5Y4L/MyPearlsNotFitting.png?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1618083781118-JYQJ94NLYDNYFIVR5Y4L/MyPearlsNotFitting.png?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1618083781118-JYQJ94NLYDNYFIVR5Y4L/MyPearlsNotFitting.png?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+          
+          <figcaption class="image-caption-wrapper">
+            <div class="image-caption"><p class="" style="white-space:pre-wrap;">The “My Pearls” text does not fit.</p></div>
+          </figcaption>
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Goodness, there is not way “My Pearls” is going to fit. So, what does Apple do in these instances (generally a pretty helpful question; and we can pull out first-party apps and take a look).</p>
+<p class="" style="white-space:pre-wrap;">It turns out that the text doesn’t grow to a full size very often. So We can use fixed size here.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+    
+  
+    <div class="
+          image-block-outer-wrapper
+          layout-caption-below
+          design-layout-inline
+          combination-animation-site-default
+          individual-animation-site-default
+          individual-text-animation-site-default
+        " data-test="image-block-inline-outer-wrapper">
+
+      
+
+      
+        <figure class="
+              sqs-block-image-figure
+              intrinsic
+            " style="max-width:600px;">
+          
+        
+        
+
+        
+          
+            
+          <div class="image-block-wrapper" data-animation-role="image">
+            <div class="sqs-image-shape-container-element
+              
+          
+        
+              has-aspect-ratio
+            " style="
+                position: relative;
+                                
+                overflow: hidden;-webkit-mask-image: -webkit-radial-gradient(white, black);
+              ">
+                
+                  
+                  
+                  
+                  
+                  
+                  
+                  <img data-stretch="false" src="/squarespace_images/content_v1_5ff86ecddd4cdc650b260a12_1618083981806-35ADMMRXXWRFUZ0EAG6O_MyPearlsFits.png_" data-image="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1618083981806-35ADMMRXXWRFUZ0EAG6O/MyPearlsFits.png" data-image-dimensions="600x507" data-image-focal-point="0.5,0.5" alt="Now “My Pearls fits." data-load="false" width="600" height="507" sizes="100vw" style="display:block;object-fit: cover; width: 100%; height: 100%; object-position: 50% 50%" srcset="https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1618083981806-35ADMMRXXWRFUZ0EAG6O/MyPearlsFits.png?format=100w 100w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1618083981806-35ADMMRXXWRFUZ0EAG6O/MyPearlsFits.png?format=300w 300w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1618083981806-35ADMMRXXWRFUZ0EAG6O/MyPearlsFits.png?format=500w 500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1618083981806-35ADMMRXXWRFUZ0EAG6O/MyPearlsFits.png?format=750w 750w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1618083981806-35ADMMRXXWRFUZ0EAG6O/MyPearlsFits.png?format=1000w 1000w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1618083981806-35ADMMRXXWRFUZ0EAG6O/MyPearlsFits.png?format=1500w 1500w, https://images.squarespace-cdn.com/content/v1/5ff86ecddd4cdc650b260a12/1618083981806-35ADMMRXXWRFUZ0EAG6O/MyPearlsFits.png?format=2500w 2500w" loading="lazy" decoding="async" data-loader="sqs">
+                
+            </div>
+          </div>
+        
+          
+        
+
+        
+          
+          <figcaption class="image-caption-wrapper">
+            <div class="image-caption"><p class="" style="white-space:pre-wrap;">Now “My Pearls fits.</p></div>
+          </figcaption>
+        
+      
+        </figure>
+      
+
+    </div>
+  
+
+
+  
+
+
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Well, now it fits, but there is still something missing. We don’t want to leave our large text accessibility users in a lurch if they’re wondering what that tiny text says. So again, let’s do what Apple does! There is a great tool called UILargeContentViewerInteraction. You can learn more about this in this <a href="https://developer.apple.com/videos/play/wwdc2019/261/">great WWDC session</a> and <a href="https://www.fivestars.blog/articles/large-content-viewer/">in this blog post</a>.</p>
+<p class="" style="white-space:pre-wrap;">Unfortunately, in our SwiftUI app, there isn’t a way to access it. I even tried wrapping a UILabel in UIViewRepresentable and UIViewControllerRepresentable, setting all the things and, no dice. So I filed my Feedback and started thinking.</p>
+<p class="" style="white-space:pre-wrap;">What does the software developer do when the Suez Canal is blocked? We build a new canal! </p>
+<p class="" style="white-space:pre-wrap;">So I made my own version of the feature as a holdover.</p>
+<p class="" style="white-space:pre-wrap;">First I created an accessibilityAdjuster.</p>
+</div>
+
+
+
+<pre><code>import Combine
+import SwiftUI
+
+class AccessibilityAdjuster: ObservableObject {
+    @Published var largeContentViewerText: String? = nil
+    // Other things ...
+}</code></pre>
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">I’ve got a bunch of stuff in here to make adjustments, like changing the size of my grid to make room for the larger text and so on, but I’m keeping that away for now. What I did for this was add my published text.</p>
+<p class="" style="white-space:pre-wrap;">Then as the last view in the ZStack where I show my custom navigation header I have:</p>
+</div>
+
+
+
+<pre><code>if let largeText = adjuster.largeContentViewerText {
+                ZStack {
+                    Text(largeText)
+                        .foregroundColor(.white)
+                        .padding()
+                }
+                .background(Theme.generalBackground.clipShape(RoundedRectangle(cornerRadius: 12)).shadow(radius: 10))
+
+            }</code></pre>
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">If the text is there, show it in white in large accessibility body, the default, with my theme’s general background color, which is dark in both light and dark mode. And round the corners of the background.</p>
+<p class="" style="white-space:pre-wrap;">The text that people can tap on to see the bigger version looks like this:</p>
+</div>
+
+
+
+<pre><code>import SwiftUI
+
+struct HeaderTitle: View {
+    @EnvironmentObject var adjuster: AccessibilityAdjuster
+    @Environment(\.sizeCategory) var category
+    @GestureState private var isTapped = false
+    var isInline: Bool
+    var body: some View {
+        Text(Words.pearls)
+            .lineLimit(1)
+            .font(.custom("Roboto-Bold", fixedSize: 18))
+            .foregroundColor(Theme.lightTitle)
+            .opacity(isInline ? 1 : 0)
+            .animation(.linear(duration: 0.2))
+            .gesture(DragGesture(minimumDistance: 0).updating($isTapped, body: { _, _, _ in
+                switch category {
+                case .accessibilityMedium,
+                     .accessibilityLarge,
+                     .accessibilityExtraLarge,
+                     .accessibilityExtraExtraLarge,
+                     .accessibilityExtraExtraExtraLarge:
+                    adjuster.largeContentViewerText = Words.pearls
+                default:
+                    break
+                }
+            }).onEnded({ _ in
+                adjuster.largeContentViewerText = nil
+            }))
+    }
+}</code></pre>
+
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Here I have my custom font at a fixed size, and in the case of accessibility font sizes, I set the value to Words.pearls, which is the static variable of a struct that contains a reference to the “My Pearls” string.</p>
+<p class="" style="white-space:pre-wrap;">When the gesture ends, we set it back to nil.</p>
+<p class="" style="white-space:pre-wrap;">(The “isInline” stuff is to manage the transition for large title to inline title).</p>
+<p class="" style="white-space:pre-wrap;">Now it looks like this!</p>
+</div>
+
+
+
+<div class="intrinsic" style="max-width:100%">
+<iframe src="//www.youtube.com/embed/yX8CtVjOH0A?wmode=opaque" height="480" width="854" scrolling="no"></iframe>
+<div class="video-caption-wrapper"><div class="video-caption"><p class="" style="white-space:pre-wrap;">Tapping and holding twice to make the homemade UILargeContentViewerInteraction to appear.</p></div></div>
+</div>
+
+<div class="sqs-html-content">
+  <p class="" style="white-space:pre-wrap;">Awesome! Still looks a little weird to have the small “My Pearls” text off-center, so I may adjust that for the large accessibility size, but not bad overall.</p>
+<p class="" style="white-space:pre-wrap;">As always, feel free to <a href="https://www.cephalopod.studio/work/pearl">jump into the beta of Pearl</a>. I’m hoping to have the redesign work I showed off in my aurora post and here working soon for iOS and iPad (and then we make it look good for the non-Catalyst SwiftUI Mac version!).</p>
+<p class="" style="white-space:pre-wrap;">Thanks again y’all, and happy coding.</p>
+</div>
+</body></html>
